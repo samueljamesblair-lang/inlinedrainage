@@ -1,0 +1,244 @@
+/* =========================================================================
+   Statement, pinned services story, blocked-drain callout
+   ========================================================================= */
+
+/* ---------- statement ---------- */
+.statement { position: relative; padding: var(--section) 0 calc(var(--section) * .72); background: var(--black); }
+.statement__grid { display: grid; gap: clamp(40px, 6vw, 84px); align-items: end; }
+.statement__main { display: grid; gap: 28px; justify-items: start; }
+.statement__text {
+  font: 500 clamp(1.5rem, .8rem + 2.4vw, 3.1rem)/1.24 var(--f-display); letter-spacing: -.032em; text-wrap: pretty;
+}
+.js:not(.reduce) [data-lit] .lw { opacity: .2; transition: opacity .6s var(--e-out); }
+.js:not(.reduce) [data-lit] .lw.is-on { opacity: 1; }
+.statement__side { display: grid; gap: 28px; justify-items: start; }
+.mission { padding-left: 22px; border-left: 2px solid var(--red); display: grid; gap: 14px; max-width: 34ch; }
+.mission__t { font: 500 clamp(1.08rem, 1rem + .4vw, 1.3rem)/1.55 var(--f-body); color: rgba(255, 255, 255, .88); }
+@media (min-width: 900px) {
+  .statement__grid { grid-template-columns: minmax(0, 1.75fr) minmax(0, .75fr); }
+}
+
+/* ---------- story: stack mode (default, no JS, reduced motion) ---------- */
+.story { --n: 7; --step: max(56vh, 400px); --edge: max(var(--gutter), calc((100% - var(--max)) / 2)); position: relative; background: var(--black); padding: var(--section) 0; }
+@supports (height: 1svh) { .story { --step: max(56svh, 400px); } }
+
+.story__shade, .story__count, .story__hint { display: none; }
+.story__head { width: min(100% - 2 * var(--gutter), var(--max)); margin: 0 auto clamp(40px, 6vw, 72px); display: grid; gap: 22px; justify-items: start; }
+.story__stops { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; display: grid; gap: clamp(20px, 3vw, 32px); }
+
+.stop {
+  position: relative; display: grid; border-radius: 28px; overflow: hidden; isolation: isolate;
+  background: linear-gradient(180deg, var(--ink-3), var(--ink-2)); border: 1px solid var(--line);
+}
+.stop__media { position: relative; margin: 0; aspect-ratio: 16 / 10; overflow: hidden; }
+.stop__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); }
+.stop__body { padding: clamp(22px, 3vw, 44px); display: grid; align-content: center; justify-items: start; gap: 14px; }
+.stop__title { font-size: clamp(1.55rem, 1rem + 1.9vw, 2.7rem); line-height: 1.06; }
+.stop__text { color: rgba(255, 255, 255, .78); max-width: 50ch; margin-bottom: 10px; }
+@media (min-width: 900px) {
+  .stop { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .stop__media { aspect-ratio: auto; min-height: 400px; }
+  .stop:nth-child(even) .stop__media { order: 2; }
+}
+
+.stop[data-stop="0"] { --pos: 42% 62%; }
+.stop[data-stop="1"] { --pos: 50% 88%; }
+.stop[data-stop="2"] { --pos: 50% 74%; }
+.stop[data-stop="3"] { --pos: 50% 4%; }
+.stop[data-stop="4"] { --pos: 50% 20%; }
+.stop[data-stop="5"] { --pos: 36% 55%; }
+.stop[data-stop="6"] { --pos: 50% 50%; }
+
+/* phones: portrait photos fill the screen, so repeated photos are reframed with a zoom focus instead */
+@media (max-width: 899px) {
+  .stop[data-stop="1"] { --zoom: 1.5; --origin: 38% 88%; }
+  .stop[data-stop="2"] { --zoom: 1.55; --origin: 64% 82%; }
+  .stop[data-stop="3"] { --zoom: 1.55; --origin: 50% 10%; }
+  .stop[data-stop="4"] { --zoom: 1.5; --origin: 56% 22%; }
+}
+
+/* ---------- story: pinned mode (class added by story.js) ---------- */
+.story.is-pinned { padding: 0; }
+/* The track is one stage taller than the scroll story needs: the next section slides up OVER the pinned stage
+   (a curtain) instead of the stage scrolling away, so the final photo is never half-exposed. */
+.story.is-pinned .story__track { position: relative; height: calc(200vh + (var(--n) - 1) * var(--step)); }
+@supports (height: 1svh) { .story.is-pinned .story__track { height: calc(200svh + (var(--n) - 1) * var(--step)); } }
+.story.is-pinned + .clog { position: relative; z-index: 3; margin-top: -100vh; }
+@supports (height: 1svh) { .story.is-pinned + .clog { margin-top: -100svh; } }
+.story.is-pinned .story__stage {
+  position: sticky; top: 0; height: 100vh; overflow: clip; background: var(--black); isolation: isolate;
+}
+@supports (height: 1svh) { .story.is-pinned .story__stage { height: 100svh; } }
+
+.story.is-pinned .story__head {
+  position: absolute; z-index: 6; left: var(--edge); top: calc(var(--hdr) + clamp(18px, 4.5vh, 48px));
+  width: min(460px, 38vw); margin: 0; gap: 18px;
+}
+.story.is-pinned .h2 { font-size: clamp(1.6rem, .9rem + 2.1vw, 2.9rem); }
+
+.story.is-pinned .story__stops { position: absolute; inset: 0; width: auto; margin: 0; display: block; gap: 0; }
+.story.is-pinned .stop {
+  position: absolute; inset: 0; display: block; border: 0; border-radius: 0; background: none; overflow: visible; pointer-events: none;
+  isolation: auto;   /* the shade (z2) must sit between the photos (z1) and the cards (z5) */
+}
+.story.is-pinned .stop__media {
+  position: absolute; inset: 0; z-index: 1; margin: 0; aspect-ratio: auto; min-height: 0; overflow: hidden;
+  opacity: 0; visibility: hidden; will-change: opacity;
+}
+.story.is-pinned .stop__media img {
+  position: absolute; left: -3%; top: -3%; width: 106%; height: 106%; max-width: none; will-change: transform;
+  transform-origin: var(--origin, 50% 50%);
+}
+.story.is-pinned .story__shade {
+  display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--black) 0%, rgba(11, 11, 12, .93) 20%, rgba(11, 11, 12, .6) 44%, rgba(11, 11, 12, .14) 78%, rgba(11, 11, 12, 0) 100%),
+    linear-gradient(0deg, rgba(11, 11, 12, .92) 0%, rgba(11, 11, 12, 0) 38%),
+    linear-gradient(180deg, rgba(11, 11, 12, .82) 0%, rgba(11, 11, 12, 0) 26%),
+    radial-gradient(46% 70% at 76% 64%, rgba(255, 48, 25, .13), transparent 70%);
+}
+
+/* card */
+.story.is-pinned .stop__body {
+  position: absolute; z-index: 5; left: clamp(380px, 46vw, 760px); right: var(--edge); max-width: 620px;
+  bottom: clamp(60px, 12vh, 132px); padding: clamp(24px, 2.8vw, 44px); border-radius: 28px;
+  background: linear-gradient(180deg, rgba(26, 26, 30, .8), rgba(11, 11, 12, .92));
+  border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 50px 110px -40px #000;
+  opacity: 0; visibility: hidden; transform: translate3d(0, 34px, 0);
+  transition: opacity .42s var(--e-out), transform .7s var(--e-out), visibility 0s linear .42s;
+}
+.story.is-pinned .stop__body::before {
+  content: ""; position: absolute; left: 28px; right: 28px; top: -1px; height: 2px;
+  background: linear-gradient(90deg, var(--red), rgba(255, 48, 25, 0)); opacity: .9;
+}
+.story.is-pinned .stop.is-active .stop__body {
+  opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+  transition-delay: .08s, .08s, 0s;
+}
+.story.is-pinned .stop.is-past .stop__body { transform: translate3d(0, -34px, 0); }
+.story.is-pinned .stop__body > * {
+  opacity: 0; transform: translate3d(0, 16px, 0);
+  transition: opacity .5s var(--e-out), transform .75s var(--e-out);
+}
+.story.is-pinned .stop.is-active .stop__body > * { opacity: 1; transform: none; }
+.story.is-pinned .stop.is-active .stop__body > :nth-child(1) { transition-delay: .12s; }
+.story.is-pinned .stop.is-active .stop__body > :nth-child(2) { transition-delay: .17s; }
+.story.is-pinned .stop.is-active .stop__body > :nth-child(3) { transition-delay: .22s; }
+.story.is-pinned .stop.is-active .stop__body > :nth-child(4) { transition-delay: .27s; }
+
+/* counter + hint */
+.story.is-pinned .story__count {
+  display: flex; align-items: baseline; position: absolute; z-index: 5; right: var(--edge); bottom: clamp(22px, 4.6vh, 50px);
+  font: 500 clamp(1.4rem, 1rem + 1.4vw, 2.3rem)/1 var(--f-display); color: #fff; letter-spacing: -.03em;
+}
+.story__of { color: var(--dim); font-size: .46em; letter-spacing: .12em; margin-left: .5em; }
+.story.is-pinned .story__hint {
+  display: flex; align-items: center; gap: 10px; position: absolute; z-index: 5; left: var(--edge); bottom: clamp(22px, 4.6vh, 50px);
+  font: 700 .66rem/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+  transition: opacity .6s var(--e-out);
+}
+.story__hint .i { color: var(--red-hot); animation: bob 1.8s var(--e-io) infinite; }
+@keyframes bob { 0%, 100% { transform: translate3d(0, -2px, 0); } 50% { transform: translate3d(0, 4px, 0); } }
+.story.is-started .story__hint { opacity: 0; }
+
+/* rail (built by story.js) */
+.rail {
+  position: absolute; z-index: 4; left: var(--edge); top: var(--rail-top, 330px); bottom: clamp(70px, 11vh, 118px);
+  width: min(380px, 36vw);
+}
+.rail__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rail__list { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
+.rail__item { position: absolute; left: 0; top: 0; will-change: transform; }
+.rail__node {
+  display: flex; align-items: center; gap: 8px; height: 44px; padding: 0; border: 0; background: none; color: var(--dim);
+  text-align: left; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.rail__dot { position: relative; width: 44px; height: 44px; flex: none; display: grid; place-items: center; }
+.rail__dot::before {
+  content: ""; width: 13px; height: 13px; border-radius: 50%; background: var(--black); border: 2px solid rgba(255, 255, 255, .42);
+  transition: transform .55s var(--e-out);
+}
+.rail__dot::after {
+  content: ""; position: absolute; inset: 6px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 48, 25, .6), rgba(255, 48, 25, 0));
+  opacity: 0; transform: scale(.4); transition: opacity .5s, transform .7s var(--e-out);
+}
+.rail__num { display: none; }
+.rail__label {
+  font: 700 .74rem/1.2 var(--f-body); letter-spacing: .12em; text-transform: uppercase;
+  transition: transform .7s var(--e-out);
+}
+.rail__node.is-past .rail__dot::before { background: var(--red); border-color: var(--red); }
+.rail__node.is-past .rail__label { color: rgba(255, 255, 255, .64); }
+.rail__node.is-active .rail__dot::before { transform: scale(1.55); background: var(--red); border-color: #fff; }
+.rail__node.is-active .rail__dot::after { opacity: 1; transform: scale(2.1); }
+.rail__node.is-active .rail__label { color: #fff; transform: translate3d(8px, 0, 0); }
+@media (hover: hover) { .rail__node:hover .rail__label { color: #fff; } }
+.rail__node:focus-visible { border-radius: 12px; }
+
+/* phones: horizontal rail, full-bleed photo, card above the action bar */
+@media (max-width: 899px) {
+  .story.is-pinned .story__head { left: var(--edge); right: var(--edge); width: auto; top: calc(var(--hdr) + 8px); gap: 12px; }
+  .story.is-pinned .h2 { font-size: clamp(1.35rem, 1rem + 1.6vw, 1.8rem); }
+  .story.is-pinned .story__shade {
+    background:
+      linear-gradient(180deg, rgba(11, 11, 12, .94) 0%, rgba(11, 11, 12, .55) 30%, rgba(11, 11, 12, .1) 52%, rgba(11, 11, 12, .72) 74%, var(--black) 100%),
+      radial-gradient(70% 40% at 50% 60%, rgba(255, 48, 25, .1), transparent 70%);
+  }
+  .rail { left: 0; right: 0; width: auto; top: var(--rail-top, 176px); bottom: auto; height: 64px; }
+  .rail__label { display: none; }
+  .rail__dot::before { width: 28px; height: 28px; }
+  .rail__num {
+    display: grid; place-items: center; position: absolute; inset: 0; z-index: 1;
+    font: 800 .72rem/1 var(--f-body); color: #fff;
+  }
+  .rail__node.is-active .rail__dot::before { transform: scale(1.22); }
+  .rail__node.is-active .rail__num { color: var(--black); }
+  .rail__node.is-past .rail__num { color: var(--black); }
+  .story.is-pinned .stop__body {
+    left: var(--edge); right: var(--edge); max-width: none; bottom: calc(var(--bar) + var(--safe-b) + 14px);
+    padding: 22px 22px 24px; border-radius: 24px; background: linear-gradient(180deg, rgba(20, 20, 23, .84), rgba(11, 11, 12, .94));
+  }
+  .story.is-pinned .stop__title { font-size: clamp(1.4rem, 1.1rem + 1.5vw, 1.9rem); }
+  .story.is-pinned .stop__text { font-size: .96rem; line-height: 1.55; margin-bottom: 6px; }
+  .story.is-pinned .stop__body { gap: 10px; }
+  .story.is-pinned .story__count, .story.is-pinned .story__hint { display: none; }
+}
+@media (max-width: 899px) and (max-height: 700px) {
+  .story.is-pinned .story__head .eyebrow { display: none; }
+  .story.is-pinned .stop__text { font-size: .9rem; }
+}
+
+/* ---------- blocked drain callout ---------- */
+.clog { position: relative; isolation: isolate; overflow: clip; padding: var(--section) 0; background: #09090a; }
+.clog::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(9, 9, 10, 0) 72%, #09090a 100%),
+    radial-gradient(58% 80% at 82% 52%, rgba(255, 48, 25, .3), transparent 70%),
+    radial-gradient(40% 50% at 0% 100%, rgba(255, 48, 25, .1), transparent 70%);
+}
+.clog::after {
+  content: ""; position: absolute; left: var(--gutter); right: var(--gutter); top: 0; height: 1px;
+  background: linear-gradient(90deg, rgba(255, 48, 25, 0), rgba(255, 48, 25, .7), rgba(255, 48, 25, 0));
+}
+.clog__inner { display: grid; gap: clamp(36px, 5vw, 72px); align-items: center; }
+.clog__copy { display: grid; gap: 24px; justify-items: start; }
+.clog__title { font-size: clamp(2.7rem, 1rem + 5.4vw, 6.2rem); letter-spacing: -.048em; line-height: .98; }
+.clog__text { color: rgba(255, 255, 255, .84); font-size: clamp(1.06rem, 1rem + .4vw, 1.3rem); max-width: 28ch; }
+.clog__actions { display: grid; gap: 12px; width: 100%; max-width: 440px; }
+.clog__more { margin-top: 4px; }
+.clog__viz { position: relative; aspect-ratio: 16 / 11; width: 100%; min-height: 240px; }
+.clog__canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+.clog__fig { position: absolute; left: 4px; bottom: -8px; color: var(--dim); }
+@media (min-width: 900px) {
+  .clog__inner { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
+}
+@media (min-width: 1100px) {
+  .clog__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
+  .clog__actions .call--big { padding-right: 16px; }
+}

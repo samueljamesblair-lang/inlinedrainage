@@ -1,0 +1,308 @@
+/* ==========================================================================
+   Inline Drainage  |  HEAVY / HI-VIS
+   base.css: tokens, reset, type, buttons, shared bits
+   Animation rule used everywhere: transform + opacity only.
+   ========================================================================== */
+
+/* Metric-matched fallbacks so the web-font swap barely moves anything (CLS).
+   Ratios measured in Chrome: Anton = 93.2% of Impact, Barlow = ~97% of Arial. */
+@font-face {
+  font-family: "Anton Fallback";
+  src: local("Impact"), local("Haettenschweiler");
+  size-adjust: 93.2%;
+}
+@font-face {
+  font-family: "Barlow Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica");
+  size-adjust: 96.8%;
+}
+@font-face {
+  font-family: "Plex Fallback";
+  src: local("Menlo"), local("Courier New");
+  size-adjust: 99.7%;
+}
+
+:root {
+  /* palette: brand black, brand red, white, neutrals */
+  --black: #0b0b0c;
+  --ink: #141416;
+  --coal: #1c1c1f;
+  --steel: #2c2c30;
+  --red: #ff3019;
+  --red-deep: #c91c08;          /* red for small text on light (>= 4.5:1) */
+  --white: #ffffff;
+  --paper: #efede8;
+  --bone: #dcd9d2;
+  --dim: #b9b7b2;               /* secondary text on black (>= 9:1) */
+  --mute: #55555a;              /* secondary text on paper (>= 6.5:1) */
+
+  --f-display: "Anton", "Anton Fallback", Impact, "Arial Narrow", sans-serif;
+  --f-body: "Barlow", "Barlow Fallback", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", "Plex Fallback", ui-monospace, Menlo, Consolas, monospace;
+
+  --header-h: 60px;
+  --bar-h: 64px;
+  --gutter: clamp(16px, 4.5vw, 64px);
+  --max: 1440px;
+  --cut: clamp(28px, 5.2vw, 88px);   /* height of the diagonal section cuts */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --focus: var(--black);
+}
+
+@media (min-width: 900px) {
+  :root { --header-h: 76px; }
+}
+
+::selection { background: var(--red); color: var(--black); }
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 8px);
+  scroll-padding-bottom: calc(var(--bar-h) + 16px);
+}
+@media (min-width: 900px) {
+  html { scroll-padding-bottom: 24px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+body {
+  margin: 0;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--f-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+/* keep the last content clear of the fixed mobile bar */
+@media (max-width: 899.98px) {
+  body { padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px)); }
+}
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+h1, h2, h3, h4, p, ul, ol, figure, address { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+address { font-style: normal; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.bg-black, .site-header, .site-footer, .callbar, .hero, .reel, .blocked-dark { --focus: var(--white); }
+.bg-red, .blocked, .careers { --focus: var(--black); }
+
+.vh {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.skip {
+  position: fixed;
+  left: 12px; top: 12px;
+  z-index: 100;
+  display: inline-flex; align-items: center;
+  min-height: 48px; padding: 0 20px;
+  background: var(--red); color: var(--black);
+  font: 400 1.1rem/1 var(--f-display);
+  letter-spacing: .04em; text-transform: uppercase; text-decoration: none;
+  transform: translate3d(0, -200%, 0);
+}
+.skip:focus-visible { transform: none; outline-color: var(--white); }
+
+.container {
+  width: min(100% - 2 * var(--gutter), var(--max));
+  margin-inline: auto;
+}
+
+.ico { width: 1.15em; height: 1.15em; flex: none; }
+
+/* ---------- type ---------- */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .7em;
+  font: 500 .8125rem/1.2 var(--f-mono);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--dim);
+}
+.eyebrow::before {
+  content: "";
+  width: .7em; height: .7em;
+  background: var(--red);
+  flex: none;
+}
+.eyebrow__count { color: var(--red); margin-left: .2em; }
+.eyebrow--dark { color: var(--black); }
+.eyebrow--dark::before { background: var(--black); }
+.bg-paper .eyebrow { color: var(--mute); }
+
+.h-giant {
+  font: 400 clamp(3.4rem, 15.5vw, 9rem)/.88 var(--f-display);
+  text-transform: uppercase;
+  letter-spacing: .005em;
+  margin-top: 14px;
+  text-wrap: balance;
+}
+.h-giant em { font-style: normal; color: var(--red); }
+.bg-paper .h-giant em { color: var(--red); }
+
+.nowrap { white-space: nowrap; }
+
+.textlink {
+  display: inline-flex; align-items: center;
+  min-height: 44px;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: .22em;
+}
+.textlink b { font-weight: 700; margin-left: .35em; white-space: nowrap; }
+
+/* ---------- hazard stripe (used sparingly) ---------- */
+.hazard {
+  height: 14px;
+  background: repeating-linear-gradient(-45deg, var(--red) 0 14px, var(--black) 14px 28px);
+}
+.hazard--thin { height: 6px; background: repeating-linear-gradient(-45deg, var(--red) 0 6px, var(--black) 6px 12px); }
+
+/* ---------- buttons: sharp, heavy, 56px+ ---------- */
+.btn {
+  --bg: var(--red);
+  --fg: var(--black);
+  --slab: var(--black);
+  --fg-hover: var(--white);
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: .65em;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 1.25rem/1 var(--f-display);
+  letter-spacing: .05em; text-transform: uppercase; text-decoration: none; text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn b { font-weight: 400; }
+.btn::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1;
+  background: var(--slab);
+  transform: translate3d(-101%, 0, 0);
+  transition: transform .38s var(--ease-out);
+}
+.btn .ico { transition: transform .38s var(--ease-out); }
+.btn--red { --bg: var(--red); --fg: var(--black); --slab: var(--black); --fg-hover: var(--white); }
+.btn--black { --bg: var(--black); --fg: var(--white); --slab: var(--red); --fg-hover: var(--black); }
+.btn--white { --bg: var(--white); --fg: var(--black); --slab: var(--red); --fg-hover: var(--black); }
+.btn--outline { box-shadow: inset 0 0 0 3px var(--black); }
+.btn--sm { min-height: 46px; padding: 0 18px; font-size: 1.05rem; }
+.btn--lg { min-height: 60px; font-size: 1.3rem; }
+.btn--xl { min-height: 68px; padding: 0 30px; font-size: 1.5rem; }
+.btn--block { width: 100%; }
+
+@media (hover: hover) {
+  .btn:hover { color: var(--fg-hover); }
+  .btn:hover::before { transform: none; }
+  .btn:hover .ico { transform: translate3d(4px, 0, 0); }
+}
+.btn:focus-visible { color: var(--fg-hover); }
+.btn:focus-visible::before { transform: none; }
+.btn:active { transform: translate3d(0, 2px, 0); }
+
+/* big phone blocks */
+.call-block {
+  --slab: var(--black);
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "who ico" "num ico";
+  align-items: center;
+  column-gap: 16px;
+  min-height: 92px;
+  padding: 16px 20px;
+  background: var(--red);
+  color: var(--black);
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+.call-block::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background: var(--slab);
+  transform: translate3d(-101%, 0, 0);
+  transition: transform .4s var(--ease-out);
+}
+.call-block__who {
+  grid-area: who;
+  font: 500 .8125rem/1.2 var(--f-mono);
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.call-block__num {
+  grid-area: num;
+  font: 400 clamp(2.15rem, 9vw, 3.4rem)/1 var(--f-display);
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+.call-block .ico { grid-area: ico; width: 34px; height: 34px; }
+.call-block--dark { --slab: var(--white); background: var(--black); color: var(--white); }
+.call-block--dark .ico { color: var(--red); }
+@media (hover: hover) {
+  .call-block:hover { color: var(--white); }
+  .call-block:hover::before { transform: none; }
+  .call-block--dark:hover { color: var(--black); }
+  .call-block--dark:hover .ico { color: var(--black); }
+}
+.call-block:focus-visible::before { transform: none; }
+.call-block:focus-visible { color: var(--white); }
+.call-block--dark:focus-visible { color: var(--black); }
+.call-block--dark:focus-visible .ico { color: var(--black); }
+
+/* ---------- clip mask (hero headline on load, section headings on scroll) ---------- */
+.mask {
+  display: inline-block; vertical-align: top;
+  overflow: hidden;
+  padding: .06em .04em .03em; margin: -.06em -.04em -.03em;
+}
+/* words are wrapped by main.js; hidden only while their heading is waiting to enter */
+.js .h-giant.is-split .word {
+  display: inline-block;
+  transform: translate3d(0, 112%, 0);
+  transition: transform .7s var(--ease-out);
+  transition-delay: calc(var(--wi, 0) * 45ms);
+}
+.js .h-giant.is-split.is-in .word { transform: none; }
+
+/* ---------- reveal on scroll (only when JS has added .js) ---------- */
+.js .reveal {
+  opacity: 0;
+  transform: translate3d(0, 34px, 0);
+  transition: opacity .55s var(--ease-out), transform .65s var(--ease-out);
+  transition-delay: var(--rd, 0ms);
+}
+.js .reveal.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .h-giant.is-split .word { transform: none; transition: none; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .btn::before, .call-block::before, .btn .ico { transition: none; }
+}
