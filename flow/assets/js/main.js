@@ -264,7 +264,7 @@
   I.onScroll(function (s) {
     if (!header) return;
     header.classList.toggle('is-solid', s.y > 24);
-    var hide = s.vw < 900 && !menuOpen && s.dir > 0 && s.y > 240 && !header.contains(doc.activeElement);
+    var hide = !I.reduced() && s.vw < 900 && !menuOpen && s.dir > 0 && s.y > 240 && !header.contains(doc.activeElement);   // a bar that slides away is motion: not under reduced motion
     header.classList.toggle('is-hidden', hide);
   });
 

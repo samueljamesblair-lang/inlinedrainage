@@ -9,11 +9,14 @@
    - newlines are normalised to CRLF (%0D%0A) for the mailto body
    - the recipient is a constant; there is no cc or bcc, and nothing a visitor types can
      add one (all typed text lives inside encoded query values)
+   - the mailto: link is capped at MAX_URL characters; a longer message is shortened in the link
+     only (the panel says so, and Copy still copies all of it)
    - anything derived from user input is written with textContent, never innerHTML    */
 (function () {
   'use strict';
 
   var TO = 'inlinedrainage@outlook.com';
+  var MAX_URL = 1900;                       /* mail clients and browsers drop or cut mailto: links much past 2,000 */
 
   var form = document.getElementById('quote-form');
   var panel = document.getElementById('quote-confirm');
@@ -44,24 +47,31 @@
   var copyBtn = byId('confirm-copy');
   var copyLabel = byId('confirm-copy-label');
   var copyStatus = byId('copy-status');
+  var cutNote = byId('confirm-cut');
   var editBtn = byId('confirm-edit');
 
-  /* JS takes over validation (the no-JS fallback keeps native `required` on the name) */
+  /* JS takes over validation from the browser's native `required` check. Without JS this form is hidden
+     (html:not(.js) in sections.css) and the <noscript> card gives the email address and phone numbers instead */
   form.noValidate = true;
 
   /* ------------------------------------------------------------------
      helpers
      ------------------------------------------------------------------ */
+  /* the first n characters, never ending on half a surrogate pair (encodeURIComponent throws on one) */
+  function clip(s, n) {
+    s = s.slice(0, n);
+    var last = s.charCodeAt(s.length - 1);
+    return last >= 0xD800 && last <= 0xDBFF ? s.slice(0, -1) : s;
+  }
   function oneLine(s, max) {
-    return String(s || '').replace(/[\r\n\u2028\u2029]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max || 200);
+    return clip(String(s || '').replace(/[\r\n\u2028\u2029]+/g, ' ').replace(/\s+/g, ' ').trim(), max || 200);
   }
   function multiLine(s, max) {
-    return String(s || '')
+    return clip(String(s || '')
       .replace(/\r\n?|\u2028|\u2029/g, '\n')      /* normalise every newline flavour to \n */
       .replace(/[ \t]+\n/g, '\n')
       .replace(/\n{3,}/g, '\n\n')
-      .trim()
-      .slice(0, max || 1200);
+      .trim(), max || 1200);
   }
 
   function readValues() {
@@ -176,16 +186,39 @@
       '',
       'Message:'
     ];
-    var msgLines = d.message ? d.message.split('\n') : ['(no message)'];
-    var lines = head.concat(msgLines, ['', 'Drafted with the Inline Drainage website quote form.']);
-    return { subject: subject, lines: lines, text: lines.join('\n') };
+    var message = d.message || '(no message)';
+    var tail = ['', 'Drafted with the Inline Drainage website quote form.'];
+    var lines = head.concat(message.split('\n'), tail);
+    return { subject: subject, head: head, message: message, tail: tail, lines: lines, text: lines.join('\n') };
   }
 
-  function mailtoUrl(subject, lines) {
+  /* the start of the message with an ellipsis after it */
+  function messageStart(message, n) {
+    return clip(message, n).replace(/\s+$/, '') + '…';
+  }
+
+  /* { url, cut }. Each line carries user-supplied text, so each line is encoded; lines are joined with an
+     encoded CRLF, which is what mail clients expect. If the link would pass MAX_URL only the message is
+     shortened (to the longest start that fits): the name, phone, email, area and service lines stay whole. */
+  function mailtoUrl(msg) {
     var enc = encodeURIComponent;
-    /* each line carries user-supplied text, so each line is encoded; lines are
-       joined with an encoded CRLF, which is what mail clients expect */
-    return 'mailto:' + TO + '?subject=' + enc(subject) + '&body=' + lines.map(enc).join('%0D%0A');
+    var base = 'mailto:' + TO + '?subject=' + enc(msg.subject);
+    function build(message) {
+      return base + '&body=' + msg.head.concat(message.split('\n'), msg.tail).map(enc).join('%0D%0A');
+    }
+    var url = build(msg.message);
+    if (url.length <= MAX_URL) { return { url: url, cut: false }; }
+
+    var lo = 0;
+    var hi = msg.message.length;
+    while (lo < hi) {                       /* the link only gets longer as more of the message is kept */
+      var mid = Math.ceil((lo + hi) / 2);
+      if (build(messageStart(msg.message, mid)).length <= MAX_URL) { lo = mid; } else { hi = mid - 1; }
+    }
+    url = build(messageStart(msg.message, lo));
+    /* only a name and email made of very long multi-byte text can still be over: send the subject alone */
+    if (url.length > MAX_URL) { url = base; }
+    return { url: url, cut: true };
   }
 
   /* ------------------------------------------------------------------
@@ -194,10 +227,11 @@
   var copyText = '';
   var copyTimer = 0;
 
-  function showConfirm(msg, url) {
+  function showConfirm(msg, link) {
     subjectEl.textContent = msg.subject;
-    bodyEl.textContent = msg.text;
-    mailAgain.setAttribute('href', url);
+    bodyEl.textContent = msg.text;                 /* the whole message, which is also what Copy copies */
+    mailAgain.setAttribute('href', link.url);
+    cutNote.hidden = !link.cut;
     copyText = 'To: ' + TO + '\nSubject: ' + msg.subject + '\n\n' + msg.text;
     copyLabel.textContent = 'Copy message';
     copyStatus.textContent = '';
@@ -223,6 +257,7 @@
   }
 
   function legacyCopy(text) {
+    var back = document.activeElement;             /* the temporary textarea takes focus; give it back afterwards */
     var ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly', '');
@@ -233,6 +268,7 @@
     var ok = false;
     try { ok = document.execCommand('copy'); } catch (err2) { ok = false; }
     document.body.removeChild(ta);
+    if (back && back.focus) { back.focus({ preventScroll: true }); }
     return ok;
   }
 
@@ -277,9 +313,9 @@
     clearErrors();
 
     var msg = compose(d);
-    var url = mailtoUrl(msg.subject, msg.lines);
-    showConfirm(msg, url);                 /* panel first, so it is there whatever the mail app does */
-    window.location.href = url;
+    var link = mailtoUrl(msg);
+    showConfirm(msg, link);                /* panel first, so it is there whatever the mail app does */
+    window.location.href = link.url;
   });
 
   /* ------------------------------------------------------------------
@@ -307,21 +343,11 @@
     window.setTimeout(function () { wrap.classList.remove('is-flash'); }, 1500);
   }
 
-  document.addEventListener('click', function (e) {
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    var a = e.target.closest ? e.target.closest('a[data-service], a[data-area], a[data-quote]') : null;
-    if (!a && e.target.closest) {
-      /* a click anywhere on a service card acts as its CTA (the link stays the keyboard / AT target) */
-      var card = e.target.closest('.svc');
-      if (card && !e.target.closest('a, button')) { a = card.querySelector('a[data-service]'); }
-    }
-    if (!a || !contact) return;
-
+  function openQuote(a, fromKeyboard) {
     var svc = a.getAttribute('data-service');
     var area = a.getAttribute('data-area');
     var notes = [];
 
-    e.preventDefault();
     showForm();
     if (svc && setSelect(f.service, svc)) { flash(f.service); notes.push('Service set to ' + svc + '.'); }
     if (area && setSelect(f.area, area)) { flash(f.area); notes.push('Area set to ' + area + '.'); }
@@ -333,11 +359,42 @@
     target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     if (window.history && window.history.replaceState) { window.history.replaceState(null, '', '#contact'); }
 
-    /* keyboard-triggered click (detail 0): move focus to the control that was set. The generic
+    /* keyboard-triggered click: move focus to the control that was set. The generic
        quote buttons use the contact heading, so the next Tab carries on from there, not from the button */
-    if (e.detail === 0) {
+    if (fromKeyboard) {
       var el = svc ? f.service : (area ? f.area : byId('contact-title'));
       if (el) { el.focus({ preventScroll: true }); }
     }
+  }
+
+  function selectedText() {
+    var sel = window.getSelection && window.getSelection();
+    return sel ? String(sel) : '';
+  }
+
+  /* A click anywhere on a service card acts as its CTA (the link stays the keyboard / AT target). A mouse
+     click waits out the double-click window and gives way to text selection (a double-click on a word, or a
+     drag), so copying a description does not throw the page down to the form. */
+  var cardTimer = 0;
+
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (!e.target.closest || !contact) return;
+
+    var a = e.target.closest('a[data-service], a[data-area], a[data-quote]');
+    if (a) {
+      e.preventDefault();
+      openQuote(a, e.detail === 0);          /* detail 0: the click came from the keyboard */
+      return;
+    }
+
+    var card = e.target.closest('.svc');
+    if (!card || e.target.closest('a, button')) return;
+    var cta = card.querySelector('a[data-service]');
+    window.clearTimeout(cardTimer);
+    if (!cta || e.detail > 1 || selectedText()) return;
+    cardTimer = window.setTimeout(function () {
+      if (!selectedText()) { openQuote(cta, false); }
+    }, e.pointerType === 'mouse' ? 260 : 0);
   });
 })();

@@ -309,8 +309,9 @@ html:not(.js) .hdr__menu { display: none; }      /* no script, no menu to open: 
 }
 .tag--plain::before { display: none; }
 .tag--plain::after { display: none; }
-@media (max-width: 359px) {            /* the longest sheet tag (AREAS SERVED) is wider than a 320px content lane */
-  .tag { gap: 10px; letter-spacing: .08em; }
+@media (max-width: 359px) {            /* the longest sheet tag (AREAS SERVED) is wider than a 320px content lane; it also wraps (rather than running off the page) when a visitor's own letter spacing widens it */
+  .tag { gap: 10px; letter-spacing: .08em; flex-wrap: wrap; white-space: normal; }
+  .tag::after { min-width: 0; }            /* the hairline gives way first, so the three labels stay on one row at normal spacing */
 }
 @media (min-width: 1360px) {
   .tag--r::after { order: -1; }
@@ -361,7 +362,10 @@ html:not(.js) .hdr__menu { display: none; }      /* no script, no menu to open: 
 .fig figcaption b, .plate__fig figcaption b { color: var(--red); font-weight: 700; }
 
 /* inline link style */
-.inl { color: var(--t1); text-decoration: underline; text-decoration-color: var(--red); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.inl { color: var(--t1); text-decoration: underline; text-decoration-color: var(--red); text-decoration-thickness: 2px; text-underline-offset: 4px; overflow-wrap: anywhere; }      /* a long address wraps only when the visitor's own text spacing makes it wider than the column */
+.inl { position: relative; display: inline-block; padding-block: 11px; margin-block: -11px; }      /* a 44px-tall tap area for a text link; the negative margin gives the padding back, so the lines of text do not move */
+.inl:focus-visible { outline: 0; }
+.inl:focus-visible::after { content: ""; position: absolute; inset: 9px -4px; outline: 2px solid var(--focus, #fff); }      /* the focus ring hugs the words, not the tall tap area */
 .inl:hover { text-decoration-color: #fff; }
 
 /* ---------- sticky phone action bar ---------- */

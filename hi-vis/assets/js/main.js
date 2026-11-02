@@ -107,11 +107,15 @@
     };
 
     if (quote && hasIO) {
+      /* only the part of the form the visitor can see counts: not the strip under the sticky header
+         (the Careers anchor lands with the last pixels of the form there) nor the strip under the bar */
       var barH = bar.offsetHeight || 64;
+      var headEl = document.querySelector('.site-header');
+      var headH = (headEl && headEl.offsetHeight) || 60;
       new IntersectionObserver(function (entries) {
         formInView = entries[0].isIntersecting;
         sync();
-      }, { rootMargin: '0px 0px -' + barH + 'px 0px' }).observe(quote);
+      }, { rootMargin: '-' + headH + 'px 0px -' + barH + 'px 0px' }).observe(quote);
     }
 
     var isField = function (el) {

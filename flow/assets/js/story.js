@@ -28,8 +28,9 @@
   var countEl = root.querySelector('.story__count .roll');
   /* pinned only where the stage has room for its parts: from 900px wide the rail is vertical with a name beside each node and
      needs about 275px of height (a 44px node pitch), reached from a 680px-tall window; on a phone the card has to clear the
-     horizontal rail above it, which holds from 600px. Shorter windows get the stack of cards instead. */
-  var mq = win.matchMedia ? win.matchMedia('(min-width: 900px) and (min-height: 680px), (max-width: 899px) and (min-height: 600px)') : { matches: true };
+     horizontal rail above it: the longest service text (Development Siteworks at 320px wide) makes a 344px card, which clears
+     the rail from 640px of height. Shorter windows get the stack of cards instead. */
+  var mq = win.matchMedia ? win.matchMedia('(min-width: 900px) and (min-height: 680px), (max-width: 899px) and (min-height: 640px)') : { matches: true };
 
   var pinned = false, idx = -1, pe = 0, dist = 1, rail = null, started = false, inView = false;
   var status = null, statusTimer = 0;

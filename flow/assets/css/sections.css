@@ -10,10 +10,8 @@
   position: relative; overflow: hidden; border-radius: 26px; background: #111; border: 1px solid var(--line-2);
   box-shadow: 0 50px 100px -50px #000;
 }
-.shot--a .shot__frame, .shot--c .shot__frame { aspect-ratio: 3 / 4; }
+.shot--a .shot__frame { aspect-ratio: 3 / 4; }
 .shot--b .shot__frame { aspect-ratio: 4 / 3; }
-/* shot c is the 750px gallery-1 photo: in the single-column layout its frame stops at 640px so the photo is never drawn larger than native */
-@media (max-width: 899px) { .shot--c { max-width: 640px; } }
 .shot__frame img {
   position: absolute; left: 0; top: -8%; width: 100%; height: 116%; max-width: none; object-fit: cover; will-change: transform;
 }
@@ -25,9 +23,70 @@
 .shot figcaption .fig { flex: none; }
 @media (min-width: 900px) {
   .onsite__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(20px, 2.4vw, 36px); align-items: start; }
-  .shot--a { grid-column: 1 / span 4; }
-  .shot--b { grid-column: 5 / span 5; margin-top: clamp(90px, 12vw, 190px); }
-  .shot--c { grid-column: 10 / span 3; margin-top: clamp(30px, 4vw, 72px); }
+  .shot--a { grid-column: 1 / span 5; }
+  .shot--b { grid-column: 7 / span 6; margin-top: clamp(90px, 12vw, 190px); }
+}
+
+/* ---------- projects: two named jobs, one plate each ---------- */
+.projects { position: relative; isolation: isolate; overflow: clip; padding: calc(var(--section) * .55) 0 var(--section); background: var(--black); }
+.projects::before {   /* a faint warm wash, so the night photograph sits in light rather than on flat black */
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(50% 28% at 50% 66%, rgba(255, 48, 25, .13), transparent 72%),
+    radial-gradient(36% 24% at 6% 24%, rgba(255, 48, 25, .1), transparent 70%);
+}
+.projects::after {
+  content: ""; position: absolute; left: var(--gutter); right: var(--gutter); top: 0; height: 1px;
+  background: linear-gradient(90deg, rgba(255, 48, 25, 0), rgba(255, 48, 25, .7), rgba(255, 48, 25, 0));
+}
+.projects .sec-head { padding-top: calc(var(--section) * .45); }
+.project { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(24px, 3.2vw, 44px); }
+.project + .project { margin-top: clamp(64px, 9vw, 132px); }
+.project__media { margin: 0; }
+.project__frame {
+  position: relative; overflow: hidden; border-radius: 26px; background: #111; border: 1px solid var(--line-2);
+  box-shadow: 0 60px 120px -50px rgba(255, 48, 25, .45), 0 40px 90px -30px #000;
+}
+.project__frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.project__frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 11, 12, 0) 64%, rgba(11, 11, 12, .38) 100%);
+}
+.project__body, .project__head { display: grid; gap: 18px; justify-items: start; align-content: center; }
+.project__body {   /* the same glass card, with the red edge on top, that carries each service */
+  position: relative; padding: clamp(24px, 3vw, 44px); border-radius: 28px;
+  background: linear-gradient(180deg, rgba(26, 26, 30, .8), rgba(11, 11, 12, .92));
+  border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 50px 110px -40px #000;
+}
+.project__body::before {
+  content: ""; position: absolute; left: 28px; right: 28px; top: -1px; height: 2px;
+  background: linear-gradient(90deg, var(--red), rgba(255, 48, 25, 0)); opacity: .9;
+}
+.project__k { margin-bottom: -4px; }
+.project__title { font-size: clamp(1.55rem, 1rem + 1.9vw, 2.7rem); line-height: 1.06; }
+.project__cap { color: rgba(255, 255, 255, .82); max-width: 46ch; }
+
+/* project 01: the 750 x 1000 photo. It is never drawn wider than 750px: 440px when stacked, about 620px at most beside the text (the 3:4 frame shows it whole). */
+.project--tall .project__media { max-width: 440px; }
+.project--tall .project__frame { aspect-ratio: 3 / 4; }
+@media (min-width: 640px) {
+  .project--tall { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; column-gap: clamp(20px, 3vw, 40px); }
+  .project--tall .project__media { max-width: 750px; }
+}
+@media (min-width: 900px) {   /* the card overlaps the photo's edge (about 8% of its width, clear of the crew), as the figures overlap the hero photo */
+  .project--tall { column-gap: 0; }
+  .project--tall .project__body { margin-left: calc(-1 * clamp(24px, 3.2vw, 56px)); z-index: 2; }
+}
+
+/* project 02: the 2500 x 910 panorama, shown whole at its own ratio (so never cropped, and never wider than the 1360px container) */
+.project--wide .project__frame { aspect-ratio: 2500 / 910; }
+.project__aside { display: grid; gap: 22px; justify-items: start; }
+@media (min-width: 900px) {
+  .project--wide .project__body { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); column-gap: clamp(28px, 5vw, 88px); align-items: end; }
+}
+@media (max-width: 899px) {   /* phones and tablets: the panorama runs edge to edge, so it still reads as a panorama */
+  .project--wide .project__media { margin-inline: calc(var(--gutter) * -1); }
+  .project--wide .project__frame { border-radius: 0; border-inline: 0; }
 }
 
 /* ---------- areas: the line ---------- */
@@ -57,13 +116,13 @@
 .line__pipe i + i { animation-delay: -3.2s; width: 14%; opacity: .7; }
 .line-wrap.is-live .line__pipe i { animation-play-state: running; }
 @keyframes pulse-x { 0% { transform: translate3d(-110%, 0, 0); } 100% { transform: translate3d(480%, 0, 0); } }
-.reduce .line__pipe i { animation: none; transform: translate3d(120%, 0, 0); }
+.reduce .line__pipe i { display: none; }   /* a frozen pulse reads as a meaningless partial fill */
 
 .line { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); }
 .line__stop a {
   position: relative; display: grid; align-items: center; text-decoration: none; color: #fff; -webkit-tap-highlight-color: transparent;
 }
-.line__n { font: 600 .68rem/1 var(--f-mono); letter-spacing: .2em; color: var(--dim); }
+.line__n { font: 600 .68rem/1 var(--f-mono); letter-spacing: .2em; color: var(--muted); }
 .line__dot {
   width: 24px; height: 24px; border-radius: 50%; background: var(--black); border: 2px solid rgba(255, 255, 255, .55);
   transition: transform .55s var(--e-out);
@@ -94,7 +153,7 @@
   .line__pipe i { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 22%; background: linear-gradient(180deg, rgba(255, 48, 25, 0), var(--red) 70%, #fff); animation-name: pulse-y; }
   .line__pipe i + i { height: 14%; }
   @keyframes pulse-y { 0% { transform: translate3d(0, -110%, 0); } 100% { transform: translate3d(0, 480%, 0); } }
-  .reduce .line__pipe i { animation: none; transform: translate3d(0, 120%, 0); }
+  .reduce .line__pipe i { display: none; }
   .line__stop a { grid-template-columns: 48px minmax(0, 1fr) auto; min-height: 68px; gap: 6px; border-bottom: 1px solid rgba(255, 255, 255, .06); padding-right: 6px; }
   .line__n { display: none; }
   .line__dot { grid-column: 1; justify-self: center; position: relative; z-index: 1; }
@@ -133,7 +192,7 @@
 .contact__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(40px, 6vw, 88px); align-items: start; }
 .contact__intro { display: grid; gap: 26px; justify-items: start; }
 .contact__title { font-size: clamp(2.7rem, 1rem + 5.2vw, 6rem); letter-spacing: -.048em; line-height: .98; }
-.contact__lead { color: rgba(255, 255, 255, .84); font-size: clamp(1.05rem, 1rem + .3vw, 1.25rem); max-width: 30ch; }
+.contact__lead { color: rgba(255, 255, 255, .84); font-size: clamp(1.05rem, 1rem + .3vw, 1.25rem); max-width: 46ch; text-wrap: pretty; }
 .callstack { display: grid; gap: 12px; width: 100%; max-width: 580px; }
 .contact__meta { display: grid; gap: 14px; color: var(--muted); }
 .contact__meta li { display: flex; gap: 12px; align-items: center; min-width: 0; }
@@ -142,6 +201,8 @@
 .contact__panel { padding: clamp(22px, 3vw, 44px); border-radius: 30px; }
 @media (min-width: 960px) {
   .contact__grid { grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); }
+}
+@media (min-width: 960px) and (min-height: 780px) {   /* the intro (heading, lead, both numbers, email, address) is about 670px tall: it only stays pinned beside the form where it fits the window */
   .contact__intro { position: sticky; top: calc(var(--hdr) + 24px); }
 }
 
@@ -158,12 +219,12 @@
 .req { color: var(--red-hot); letter-spacing: .1em; }
 .quote input, .quote select, .quote textarea {
   width: 100%; min-height: 54px; padding: 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, .06);
-  border: 1px solid var(--line-2); color: #fff; font-size: 1rem; line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, .45); color: #fff; font-size: 1rem; line-height: 1.4;   /* .45: the edge of a control is at least 3:1 against the panel */
   -webkit-appearance: none; appearance: none;
 }
 .quote textarea { min-height: 150px; resize: vertical; }
 .quote ::placeholder { color: #8c8c95; opacity: 1; }
-.quote input:hover, .quote select:hover, .quote textarea:hover { border-color: rgba(255, 255, 255, .32); }
+.quote input:hover, .quote select:hover, .quote textarea:hover { border-color: rgba(255, 255, 255, .7); }
 .quote input:focus-visible, .quote select:focus-visible, .quote textarea:focus-visible {
   outline: none; border-color: var(--red); background: rgba(255, 48, 25, .08); box-shadow: 0 0 0 4px rgba(255, 48, 25, .3);
 }
@@ -192,7 +253,12 @@
   padding: 12px 16px; border-radius: 14px; background: rgba(255, 60, 40, .13); border: 1px solid rgba(255, 90, 68, .55);
   color: #ffc7bf; font-weight: 700; font-size: .92rem;
 }
+.form__privacy { color: rgba(255, 255, 255, .82); font-size: .86rem; line-height: 1.5; text-align: center; margin-top: -4px; }
 .quote[hidden], .form__error[hidden], .field__err[hidden] { display: none; }
+html:not(.js) .quote { display: none; }   /* without JavaScript the form could not open a draft: the <noscript> block beside it gives the email address and both numbers */
+.quote-nojs { display: grid; gap: 18px; }
+.quote-nojs p { color: rgba(255, 255, 255, .88); overflow-wrap: anywhere; }
+.quote-nojs .callstack { max-width: none; }
 
 /* composed message panel */
 .sent { display: grid; gap: 18px; }
@@ -230,7 +296,7 @@
 .footer__col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--red-hot); }
 .footer__tag { display: block; color: var(--dim); font-size: .78rem; margin-top: 2px; }
 .footer__base {
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 22px 0; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 0; border-top: 1px solid var(--line);
   color: var(--muted); font-size: .9rem;
 }
 .footer__base a { color: var(--muted); text-decoration: none; display: inline-flex; gap: 8px; align-items: center; min-height: 44px; }
@@ -270,8 +336,11 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, .13) 0%, rgba(255, 255, 255, .05) 55%, rgba(255, 48, 25, .12) 100%);
   -webkit-background-clip: text; background-clip: text;
 }
-@media (min-width: 900px) {
-  .footer__grid { grid-template-columns: 1.3fr .9fr 1.2fr 1.2fr; }
+@media (min-width: 600px) {
+  .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(28px, 5vw, 72px); }
+}
+@media (min-width: 1100px) {   /* from here the address column is wide enough for 'Mangaroa Valley Road' on one line */
+  .footer__grid { grid-template-columns: 1.3fr .9fr 1.2fr 1.2fr; column-gap: 40px; }
 }
 @media (max-width: 899px) {
   .site-footer { padding-bottom: calc(var(--bar) + var(--safe-b) + 6px); }

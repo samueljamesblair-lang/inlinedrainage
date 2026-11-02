@@ -157,7 +157,7 @@
   display: flex; align-items: baseline; position: absolute; z-index: 5; right: var(--edge); bottom: clamp(22px, 4.6vh, 50px);
   font: 500 clamp(1.4rem, 1rem + 1.4vw, 2.3rem)/1 var(--f-display); color: #fff; letter-spacing: -.03em;
 }
-.story__of { color: var(--dim); font-size: .46em; letter-spacing: .12em; margin-left: .5em; }
+.story__of { color: var(--muted); font-size: .46em; letter-spacing: .12em; margin-left: .5em; }
 .story.is-pinned .story__hint {
   display: flex; align-items: center; gap: 10px; position: absolute; z-index: 5; left: var(--edge); bottom: clamp(22px, 4.6vh, 50px);
   font: 700 .66rem/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
@@ -252,7 +252,6 @@
 .clog__inner { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(36px, 5vw, 72px); align-items: center; }
 .clog__copy { display: grid; gap: 24px; justify-items: start; }
 .clog__title { font-size: clamp(2.7rem, 1rem + 5.4vw, 6.2rem); letter-spacing: -.048em; line-height: .98; }
-.clog__text { color: rgba(255, 255, 255, .84); font-size: clamp(1.06rem, 1rem + .4vw, 1.3rem); max-width: 28ch; }
 .clog__actions { display: grid; gap: 12px; width: 100%; max-width: 440px; }
 .clog__more { margin-top: 4px; }
 .clog__viz { position: relative; aspect-ratio: 16 / 11; width: 100%; min-height: 240px; }
@@ -262,6 +261,7 @@
   mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
 }
 .clog__fig { position: absolute; left: 4px; bottom: -8px; color: var(--dim); }
+html:not(.js) .clog__viz { display: none; }   /* the figure is drawn by clog.js: without it, it would be an empty glow under a caption */
 @media (min-width: 900px) {
   .clog__inner { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
 }

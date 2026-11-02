@@ -134,8 +134,8 @@ html:not(.js) .plate__no { color: var(--red); }
 }
 .blocked__tag { position: relative; font: 700 11px/1 var(--ff-mono); letter-spacing: .18em; color: var(--ink); }
 .blocked__title {
-  position: relative; max-width: 4.2em; font: 900 clamp(64px, 20vw, 190px)/.8 var(--ff-head); font-stretch: 62%; text-transform: uppercase; letter-spacing: -.01em; color: var(--ink);
-  overflow-wrap: anywhere;
+  position: relative; max-width: 4.2em; font: 900 min(20vw, calc((100vw - 108px) / 3.5), 190px)/.8 var(--ff-head); font-stretch: 62%; text-transform: uppercase; letter-spacing: -.01em; color: var(--ink);
+  overflow-wrap: anywhere;          /* "BLOCKED" is ~3.38em wide and the panel interior is 108px narrower than a phone (pipe lane, gutter, padding), so the size follows the width left over: a 64px floor split it into "BLOCKE / D" at 300-330px */
 }
 .blocked__text { position: relative; max-width: 28em; font-size: clamp(18px, 2.1vw, 22px); line-height: 1.45; color: var(--ink); font-weight: 500; }
 .blocked__act { position: relative; display: grid; gap: 10px; }
@@ -146,7 +146,7 @@ html:not(.js) .plate__no { color: var(--red); }
 .blocked :focus-visible { --focus: var(--ink); }
 
 @media (min-width: 900px) {
-  .blocked__title { font-size: min(11.2vw, 168px); }
+  .blocked__title { font-size: min(11.2vw, 160px); }          /* the title column stops growing at 553px (the 1240px container) and "BLOCKED" is ~3.38em wide, so 160px is the most that fits: at 168px it split into "BLOCKE / D" from 1470px up */
   .blocked__panel { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); column-gap: 56px; row-gap: 18px; align-items: center; }
   .blocked__tag { grid-column: 1 / -1; }
   .blocked__title { grid-row: 2 / 4; align-self: center; }
@@ -154,8 +154,11 @@ html:not(.js) .plate__no { color: var(--red); }
   .blocked__act { align-self: start; grid-template-columns: 1fr 1fr; }
   .blocked__act .btn--line { grid-column: 1 / -1; }
 }
-@media (min-width: 900px) and (max-width: 1179px) {          /* side by side the call buttons are only ~150-200px wide, too tight for the phone number (it clipped under a visitor's own text spacing): stack them */
+@media (min-width: 900px) and (max-width: 1279px) {          /* side by side the call buttons are only ~150-225px wide: too tight for the phone number (it clipped under a visitor's own text spacing) and "Call Patrick" wrapped while "Call Ben" did not. Stack them */
   .blocked__act { grid-template-columns: minmax(0, 1fr); }
+}
+@media (min-width: 900px) and (max-width: 959px) {          /* the one-line label "Request drain clearing" needs ~241px; with the full 28px padding it wrapped to two lines below 940px */
+  .blocked__act .btn--line { padding-inline: 16px; }
 }
 @media (min-width: 1180px) {
   .blocked__panel { padding: 56px 64px; }

@@ -50,7 +50,6 @@
     count: coarse ? 110 : 320, dprCap: coarse ? 1.5 : 2, pointer: true
   });
 
-  I.hero = { field: field };   /* handy for inspecting particle count / quality in devtools */
   /* ---- smoothed state ---- */
   var tiltX = 0, tiltY = 0, gx = 0, gy = 0, gInit = false, glare = 0;
   var visible = false, hlIdx = -1, hlTimer = 0;

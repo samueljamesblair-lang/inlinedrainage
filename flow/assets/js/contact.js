@@ -1,8 +1,9 @@
 /* contact.js: quote request -> mailto draft.
    There is no backend. On submit we validate, build a mailto: URL (every visitor-supplied
-   value goes through encodeURIComponent, newlines normalised to CRLF, no cc/bcc), show a
-   confirmation panel with the composed message + Copy + call alternatives, and then hand
-   the URL to the browser. Anything derived from user input is written with textContent. */
+   value goes through encodeURIComponent, newlines normalised to CRLF, no cc/bcc, the whole
+   URL capped at MAX_URL characters), show a confirmation panel with the composed message +
+   Copy + call alternatives, and then hand the URL to the browser. Anything derived from
+   user input is written with textContent. */
 (function () {
   'use strict';
   var win = window, doc = document;
@@ -12,7 +13,8 @@
   if (!form || !sent) return;
 
   var TO = 'inlinedrainage@outlook.com';
-  var MAX_URL = 1900;                       // keep well inside what mail clients accept
+  var MAX_URL = 1900;                       // the whole mailto URL: keep well inside what mail clients accept
+  var NOTE = '\n[message shortened by the website form: ask the sender for the full text]';   // for Ben and Patrick, who read the email
   var enc = encodeURIComponent;
   var $ = function (id) { return doc.getElementById(id); };
   var f = {
@@ -95,6 +97,24 @@
     return { subject: subject, plain: plain, url: url };
   }
 
+  /* Over MAX_URL, only the message is shortened: to the longest start of it whose draft still fits (found by halving). It is cut on a
+     whole character, because encodeURIComponent throws on half a surrogate pair (an emoji). Name, phone and email carry maxlength in the
+     form, so even if every one of their characters took nine characters of URL they leave room for the note. */
+  function cut(text, n) {
+    var t = text.slice(0, n), last = t.charCodeAt(t.length - 1);
+    return last >= 0xD800 && last <= 0xDBFF ? t.slice(0, -1) : t;
+  }
+  function draft(v) {
+    var c = compose(v, v.message);
+    if (c.url.length <= MAX_URL || !v.message) return { c: c, shortened: false };
+    var lo = 0, hi = v.message.length, best = compose(v, NOTE.replace(/^\s+/, ''));
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1, t = compose(v, cut(v.message, mid).replace(/\s+$/, '') + NOTE);
+      if (t.url.length <= MAX_URL) { best = t; lo = mid + 1; } else hi = mid - 1;
+    }
+    return { c: best, shortened: true };
+  }
+
   function showSent(subject, plain, truncated, url) {
     if (again && url) again.setAttribute('href', url);
     form.hidden = true;
@@ -102,7 +122,7 @@
     subjEl.textContent = subject;
     msgEl.textContent = plain.replace(/\r\n/g, '\n');
     noteEl.hidden = !truncated;
-    noteEl.textContent = truncated ? 'Your message was long, so the email draft carries a shortened version. Use Copy message to send the whole thing.' : '';
+    noteEl.textContent = truncated ? 'Your message was too long for an email link, so the email draft carries only the start of it. The full message is shown above: use Copy message to send all of it.' : '';
     copyLabel.textContent = 'Copy message';
     var title = $('sent-title');
     /* the panel is taller than a phone screen: line its TOP up under the header (html scroll-padding-top) so the heading and
@@ -127,17 +147,9 @@
       bad[0][0].focus();
       return;
     }
-    var truncated = false, c = compose(v, v.message);
-    if (c.url.length > MAX_URL && v.message) {
-      truncated = true;
-      var m = v.message;
-      while (m.length > 40 && c.url.length > MAX_URL) {
-        m = m.slice(0, Math.floor(m.length * 0.85));
-        c = compose(v, m + '\n[message shortened, see the full text in the confirmation panel]');
-      }
-    }
+    var d = draft(v), c = d.c;
     composed = compose(v, v.message).plain;      // the panel (and Copy) always carry the full text
-    showSent(c.subject, composed, truncated, c.url);
+    showSent(c.subject, composed, d.shortened, c.url);
     win.location.href = c.url;
   });
 

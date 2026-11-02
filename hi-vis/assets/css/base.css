@@ -42,7 +42,8 @@
 
   --header-h: 60px;
   --bar-h: 64px;
-  --gutter: clamp(16px, 4.5vw, 64px);
+  /* viewport-fit=cover: on a notched phone in landscape the side insets are wider than the gutter, so the gutter grows to match */
+  --gutter: max(clamp(16px, 4.5vw, 64px), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --max: 1440px;
   --cut: clamp(28px, 5.2vw, 88px);   /* height of the diagonal section cuts */
   --ease-out: cubic-bezier(.2, .8, .2, 1);
@@ -61,7 +62,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-padding-top: calc(var(--header-h) + 8px);
-  scroll-padding-bottom: calc(var(--bar-h) + 16px);
+  /* the fixed call bar (its height plus the home-indicator inset) must not hide a focused or anchored item */
+  scroll-padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px) + 16px);
 }
 @media (min-width: 900px) {
   html { scroll-padding-bottom: 24px; }
@@ -99,7 +101,7 @@ button { cursor: pointer; }
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
-.bg-black, .site-header, .site-footer, .callbar, .hero, .reel, .blocked-dark { --focus: var(--white); }
+.bg-black, .site-header, .site-footer, .callbar, .hero, .reel, .projects, .blocked-dark { --focus: var(--white); }
 .bg-red, .blocked, .careers, .svc { --focus: var(--black); }   /* .svc: paper cards sit inside the black services section */
 
 .vh {

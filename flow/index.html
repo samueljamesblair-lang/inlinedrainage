@@ -2,17 +2,19 @@
 <html lang="en-NZ">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self' mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fully Qualified Drainage Company in Wellington</title>
-<meta name="description" content="Inline Drainage: experienced registered drain layers in Wellington, New Zealand. Over 45 years of combined experience, owner-operated. Call Ben or Patrick, or request a quote.">
+<title>Inline Drainage – Fully Qualified Drainage Company in Wellington</title>
+<meta name="description" content="Experienced Registered drain layers in Wellington, New Zealand. Trust us to restore, replace, and future-proof your water systems.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b0b0c">
 <meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_NZ">
-<meta property="og:title" content="Fully Qualified Drainage Company in Wellington">
-<meta property="og:description" content="Experienced registered drain layers in Wellington, New Zealand. Over 45 years of combined experience, owner-operated.">
+<meta property="og:site_name" content="Inline Drainage">
+<meta property="og:title" content="Inline Drainage – Fully Qualified Drainage Company in Wellington">
+<meta property="og:description" content="Experienced Registered drain layers in Wellington, New Zealand. Trust us to restore, replace, and future-proof your water systems.">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="assets/img/logo-full.webp" type="image/webp">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -55,6 +57,7 @@
     <nav class="nav" aria-label="Main">
       <a href="#services">Services</a>
       <a href="#about">About</a>
+      <a href="#projects">Projects</a>
       <a href="#areas">Areas</a>
       <a href="#careers">Careers</a>
     </nav>
@@ -78,6 +81,7 @@
   <nav class="menu__nav" aria-label="Menu">
     <a href="#services">Services</a>
     <a href="#about">About</a>
+    <a href="#projects">Projects</a>
     <a href="#areas">Areas</a>
     <a href="#careers">Careers</a>
     <a href="#contact">Get a quote</a>
@@ -104,22 +108,23 @@
     <canvas class="flow flow--stream" aria-hidden="true"></canvas>
 
     <div class="hero__inner">
+      <!-- the first screen's copy (headline, CTA, phone numbers) carries no reveal and no word-split: it is on screen at first paint -->
       <div class="hero__copy" data-hero-copy>
-        <p class="eyebrow hero__eyebrow reveal">Fully qualified drainage company</p>
-        <h1 class="hero__title" id="hero-title" data-split><span class="ln">Registered drain</span> <span class="ln">layers in <em>Wellington</em></span></h1>
-        <p class="hero__lead reveal">Trust us to <span class="hl">restore</span>, <span class="hl">replace</span>, and <span class="hl">future-proof</span> your water systems.</p>
-        <div class="hero__cta reveal">
+        <p class="eyebrow hero__eyebrow">Fully qualified drainage company</p>
+        <h1 class="hero__title" id="hero-title"><span class="ln">Registered drain</span> <span class="ln">layers in <em>Wellington</em></span></h1>
+        <p class="hero__lead">Trust us to <span class="hl">restore</span>, <span class="hl">replace</span>, and <span class="hl">future-proof</span> your water systems.</p>
+        <div class="hero__cta">
           <a class="btn btn--primary btn--lg" href="#contact" data-magnet>Get a quote <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           <div class="callpair" role="group" aria-label="Call us">
             <a class="call" href="tel:+64277367553"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Ben<span class="sr-only"> Carson</span></span><span class="call__num">027 7367 553</span></span></a>
             <a class="call" href="tel:+64272940952"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Patrick<span class="sr-only"> Carson</span></span><span class="call__num">027 2940 952</span></span></a>
           </div>
         </div>
-        <button class="motion-toggle reveal" type="button" aria-pressed="false" data-motion-toggle hidden><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg><span>Pause animation</span></button>
+        <button class="motion-toggle" type="button" aria-pressed="false" data-motion-toggle hidden><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg><span>Pause animation</span></button>
       </div>
       <figure class="hero__media reveal" data-hero-media>
         <div class="hero__frame" data-hero-frame>
-          <img class="hero__img" src="assets/img/intro-800.webp" srcset="assets/img/intro-480.webp 480w, assets/img/intro-800.webp 800w, assets/img/intro-1200.webp 1200w" sizes="(min-width: 900px) 36vw, 100vw" width="1200" height="1600" alt="Inline Drainage tipper truck with a yellow Hyundai excavator loading it" fetchpriority="high" decoding="async">
+          <img class="hero__img" src="assets/img/intro-800.webp" srcset="assets/img/intro-480.webp 480w, assets/img/intro-800.webp 800w, assets/img/intro-1200.webp 1200w" sizes="(min-width: 900px) 36vw, 100vw" width="1200" height="1600" alt="Inline Drainage tipper truck with the arm and bucket of a yellow Hyundai excavator reaching over its tray" fetchpriority="high" decoding="async">
           <span class="hero__sheen" aria-hidden="true"></span>
           <span class="crop crop--tl" aria-hidden="true"></span><span class="crop crop--tr" aria-hidden="true"></span><span class="crop crop--bl" aria-hidden="true"></span><span class="crop crop--br" aria-hidden="true"></span>
         </div>
@@ -178,7 +183,7 @@
       <div class="statement__side">
         <div class="mission reveal">
           <p class="mission__k"><span class="fig">MISSION</span></p>
-          <p class="mission__t">To improve the longevity and resilience of Wellington’s water infrastructure.</p>
+          <p class="mission__t">Our mission is to enhance the longevity and resilience of Wellington’s water infrastructure.</p>
         </div>
         <a class="btn btn--ghost reveal" href="#contact">Get a quote <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
@@ -203,62 +208,62 @@
         <ol class="story__stops">
           <li class="stop" id="svc-1" data-stop="0">
             <figure class="stop__media">
-              <img src="assets/img/story-careers-2-1000.webp" srcset="assets/img/story-careers-2-640.webp 640w, assets/img/story-careers-2-1000.webp 1000w, assets/img/story-careers-2-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1050" alt="Yellow Hyundai excavator and an Inline Drainage service truck on a gravel site, with crew in the distance" loading="lazy" decoding="async">
+              <img src="assets/img/story-careers-2-1000.webp" srcset="assets/img/story-careers-2-640.webp 640w, assets/img/story-careers-2-1000.webp 1000w, assets/img/story-careers-2-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1050" alt="Yellow excavator and an Inline Drainage truck on a gravel site, with two workers standing between them" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 01</span></p>
               <h3 class="stop__title">Development Siteworks</h3>
-              <p class="stop__text">Experience creating services for new or refurbished sites, laying a solid foundation for the remainder of the development.</p>
+              <p class="stop__text">We have experience with creating services for new or refurbished sites and deliver projects on time and on budget, laying a solid foundation for the remainder of the development.</p>
               <a class="btn btn--primary" href="#contact" data-service="Development Siteworks">Get a quote<span class="sr-only"> for Development Siteworks</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
           <li class="stop" id="svc-2" data-stop="1">
             <figure class="stop__media">
-              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1867" alt="White concrete pipe in the foreground of a timber-shored trench, with a worker in hi-vis" loading="lazy" decoding="async">
+              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1867" alt="Worker in orange hi-vis inside a trench with steel trench shields" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 02</span></p>
               <h3 class="stop__title">Stormwater Drainage</h3>
-              <p class="stop__text">We specialise in stormwater management and connections in Wellington, and can consult on designing and implementing stormwater solutions.</p>
+              <p class="stop__text">We specialise in stormwater management and connections within Wellington and can help consult you on the best ways to design and implement stormwater solutions.</p>
               <a class="btn btn--primary" href="#contact" data-service="Stormwater Drainage">Get a quote<span class="sr-only"> for Stormwater Drainage</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
           <li class="stop stop--native" id="svc-3" data-stop="2">
             <figure class="stop__media">
-              <img src="assets/img/gallery-1-750.webp" width="750" height="1000" alt="Three crew in hi-vis around a concrete manhole chamber in a timber-shored excavation" loading="lazy" decoding="async">
+              <img src="assets/img/gallery-1-750.webp" width="750" height="1000" alt="Two crew in orange hi-vis beside a concrete manhole chamber in an excavation with steel trench shields" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 03</span></p>
               <h3 class="stop__title">Wastewater &amp; Sewage</h3>
-              <p class="stop__text">Registered drainlayers who install and connect all types of wastewater and sewage projects, for smooth flow and sign off.</p>
+              <p class="stop__text">We are registered drainlayers and have the expertise to install and connect all types of wastewater and sewage projects to ensure smooth and efficient flow and sign off.</p>
               <a class="btn btn--primary" href="#contact" data-service="Wastewater &amp; Sewage">Get a quote<span class="sr-only"> for Wastewater and Sewage</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
           <li class="stop stop--native" id="svc-4" data-stop="3">
             <figure class="stop__media">
-              <img src="assets/img/gallery-1-750.webp" width="750" height="1000" alt="Black-clad townhouses behind a timber fence, with white pipe lengths laid out on the ground at a new housing development" loading="lazy" decoding="async">
+              <img src="assets/img/gallery-1-750.webp" width="750" height="1000" alt="Black-clad townhouses behind a timber fence, with a worker in orange hi-vis and white pipe lengths beside an excavation holding a concrete manhole chamber" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 04</span></p>
               <h3 class="stop__title">Residential Drainage</h3>
-              <p class="stop__text">Managing drainage around residential properties. Upgrading and improving the existing infrastructure and future-proofing your property.</p>
+              <p class="stop__text">Managing the drainage around residential properties. Upgrading and improving the existing infrastructure and future proofing your property.</p>
               <a class="btn btn--primary" href="#contact" data-service="Residential Drainage">Get a quote<span class="sr-only"> for Residential Drainage</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
           <li class="stop" id="svc-5" data-stop="4">
             <figure class="stop__media">
-              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1867" alt="Worker in hi-vis yellow in a shored trench, with an orange excavator and an Inline truck behind" loading="lazy" decoding="async">
+              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1867" alt="Orange excavator beside a trench on a building site, with a house and hills behind" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 05</span></p>
               <h3 class="stop__title">Watermain Connections</h3>
-              <p class="stop__text">We work with Wellington Water approved operatives so systems are installed correctly with little disruption to the local area.</p>
+              <p class="stop__text">We work with Wellington Water approved operatives to ensure that all systems are installed correctly and with little disruption to the local area.</p>
               <a class="btn btn--primary" href="#contact" data-service="Watermain Connections">Get a quote<span class="sr-only"> for Watermain Connections</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
           <li class="stop" id="svc-6" data-stop="5">
             <figure class="stop__media">
-              <img src="assets/img/story-hero-bg-1000.webp" srcset="assets/img/story-hero-bg-640.webp 640w, assets/img/story-hero-bg-1000.webp 1000w, assets/img/story-hero-bg-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="933" alt="View over Wellington city and harbour from a bush-covered hillside under an overcast sky" loading="lazy" decoding="async">
+              <img src="assets/img/story-hero-bg-1000.webp" srcset="assets/img/story-hero-bg-640.webp 640w, assets/img/story-hero-bg-1000.webp 1000w, assets/img/story-hero-bg-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="933" alt="View over a city and hills under an overcast sky" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 06</span></p>
@@ -274,7 +279,7 @@
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 07</span></p>
               <h3 class="stop__title">Digger &amp; Truck Hire</h3>
-              <p class="stop__text">For more details on this service, please email <a class="textlink" href="mailto:inlinedrainage@outlook.com?subject=Digger%20%26%20Truck%20Hire">inlinedrainage@outlook.com</a>.</p>
+              <p class="stop__text">For more details on this service, please email <a class="textlink" href="mailto:inlinedrainage@outlook.com?subject=Digger%20%26%20Truck%20Hire">inlinedrainage@outlook.com</a></p>
               <a class="btn btn--primary" href="#contact" data-service="Digger &amp; Truck Hire">Get a quote<span class="sr-only"> for Digger and Truck Hire</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
@@ -289,7 +294,6 @@
       <div class="clog__copy">
         <p class="eyebrow reveal">Drain Clearing</p>
         <h2 class="clog__title" id="clog-title" data-split>Blocked drain?</h2>
-        <p class="clog__text reveal">We are experienced in unblocking residential drains across the Wellington Region.</p>
         <div class="clog__actions reveal">
           <a class="call call--big" href="tel:+64277367553"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Ben<span class="sr-only"> Carson</span></span><span class="call__num">027 7367 553</span></span></a>
           <a class="call call--big" href="tel:+64272940952"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Patrick<span class="sr-only"> Carson</span></span><span class="call__num">027 2940 952</span></span></a>
@@ -313,23 +317,63 @@
       <div class="onsite__grid">
         <figure class="shot shot--a reveal">
           <div class="shot__frame" data-parallax="0.10">
-            <img src="assets/img/gallery-3-800.webp" srcset="assets/img/gallery-3-480.webp 480w, assets/img/gallery-3-800.webp 800w, assets/img/gallery-3-1200.webp 1200w" sizes="(min-width: 900px) 34vw, 92vw" width="1200" height="1600" alt="Worker in hi-vis yellow in a timber-shored trench, with a white concrete pipe in the foreground, an orange excavator behind and an Inline truck on the right" loading="lazy" decoding="async">
+            <img src="assets/img/gallery-3-800.webp" srcset="assets/img/gallery-3-480.webp 480w, assets/img/gallery-3-800.webp 800w, assets/img/gallery-3-1200.webp 1200w" sizes="(min-width: 900px) 41vw, 92vw" width="1200" height="1600" alt="Worker in yellow hi-vis leaning over a trench with steel trench shields, a second worker in orange hi-vis inside it, a white concrete pipe in the foreground, an orange excavator behind and an Inline truck on the right" loading="lazy" decoding="async">
           </div>
-          <figcaption><span class="fig">FIG. 03</span> Shored trench, concrete pipe in the foreground</figcaption>
+          <figcaption><span class="fig">FIG. 03</span> Trench with steel shields, concrete pipe in the foreground</figcaption>
         </figure>
         <figure class="shot shot--b reveal">
           <div class="shot__frame" data-parallax="0.08">
-            <img src="assets/img/gallery-2-800.webp" srcset="assets/img/gallery-2-480.webp 480w, assets/img/gallery-2-800.webp 800w, assets/img/gallery-2-1200.webp 1200w" sizes="(min-width: 900px) 46vw, 92vw" width="1200" height="900" alt="Orange Kubota excavator arm in the foreground with the Inline tipper truck behind, hills and blue sky" loading="lazy" decoding="async">
+            <img src="assets/img/gallery-2-800.webp" srcset="assets/img/gallery-2-480.webp 480w, assets/img/gallery-2-800.webp 800w, assets/img/gallery-2-1200.webp 1200w" sizes="(min-width: 900px) 49vw, 92vw" width="1200" height="900" alt="Orange Kubota excavator arm in the foreground with the Inline tipper truck behind, hills and blue sky" loading="lazy" decoding="async">
           </div>
           <figcaption><span class="fig">FIG. 04</span> Kubota excavator with the Inline tipper truck behind</figcaption>
         </figure>
-        <figure class="shot shot--c reveal">
-          <div class="shot__frame" data-parallax="0.12">
-            <img src="assets/img/gallery-1-750.webp" srcset="assets/img/gallery-1-480.webp 480w, assets/img/gallery-1-750.webp 750w" sizes="(min-width: 900px) 26vw, 70vw" width="750" height="1000" alt="Three crew in hi-vis orange around a concrete manhole chamber in a timber-shored excavation at a new housing development" loading="lazy" decoding="async">
-          </div>
-          <figcaption><span class="fig">FIG. 05</span> Crew at a concrete manhole chamber</figcaption>
-        </figure>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section class="projects" id="projects" aria-labelledby="projects-title">
+    <div class="container">
+      <header class="sec-head">
+        <p class="eyebrow reveal">Our work</p>
+        <h2 class="h2" id="projects-title" data-split>Projects</h2>
+      </header>
+
+      <!-- Project 01: the 750 x 1000 gallery-1 photo, never drawn wider than 750px (see .project__media in sections.css) -->
+      <article class="project project--tall reveal">
+        <figure class="project__media">
+          <div class="project__frame">
+            <img src="assets/img/gallery-1-750.webp" srcset="assets/img/gallery-1-480.webp 480w, assets/img/gallery-1-750.webp 750w" sizes="(min-width: 640px) 39vw, 90vw" width="750" height="1000" alt="Three crew in orange hi-vis around a concrete manhole chamber in an excavation with steel trench shields, with a fence, pipe lengths and black-clad townhouses behind" loading="lazy" decoding="async">
+            <span class="crop crop--tl" aria-hidden="true"></span><span class="crop crop--tr" aria-hidden="true"></span><span class="crop crop--bl" aria-hidden="true"></span><span class="crop crop--br" aria-hidden="true"></span>
+          </div>
+        </figure>
+        <div class="project__body">
+          <p class="project__k"><span class="fig">PROJECT 01</span></p>
+          <h3 class="project__title">Development Subdivision, Rimu Street</h3>
+          <p class="project__cap">Three crew in orange <span class="nowrap">hi-vis</span> around a concrete manhole chamber in a trench with steel shields, townhouses behind.</p>
+          <a class="btn btn--primary" href="#contact">Get a quote <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
+
+      <!-- Project 02: a 2500 x 910 night panorama, shown whole at its own 2.75:1 ratio (full container width on desktop, edge to edge on phones) -->
+      <article class="project project--wide reveal">
+        <figure class="project__media">
+          <div class="project__frame">
+            <img src="assets/img/interislander-1600.webp" srcset="assets/img/interislander-480.webp 480w, assets/img/interislander-800.webp 800w, assets/img/interislander-1200.webp 1200w, assets/img/interislander-1600.webp 1600w, assets/img/interislander-2000.webp 2000w, assets/img/interislander-2500.webp 2500w" sizes="(min-width: 1525px) 1360px, (min-width: 900px) 89vw, 100vw" width="2500" height="910" alt="A yellow excavator with an operator in orange hi-vis beside a white tipper truck, floodlit at night beneath a large concrete structure" loading="lazy" decoding="async">
+            <span class="crop crop--tl" aria-hidden="true"></span><span class="crop crop--tr" aria-hidden="true"></span><span class="crop crop--bl" aria-hidden="true"></span><span class="crop crop--br" aria-hidden="true"></span>
+          </div>
+        </figure>
+        <div class="project__body">
+          <div class="project__head">
+            <p class="project__k"><span class="fig">PROJECT 02</span></p>
+            <h3 class="project__title">Drainage System <span class="nowrap">Upgrade –</span> New Interislander Project</h3>
+          </div>
+          <div class="project__aside">
+            <p class="project__cap">Yellow excavator and white tipper truck beneath a large concrete structure at night, the operator in orange <span class="nowrap">hi-vis</span>.</p>
+            <a class="btn btn--primary" href="#contact">Get a quote <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -357,7 +401,7 @@
         <li class="line__stop"><a href="#contact" data-area="Wairarapa"><span class="line__n">06</span><span class="line__dot" aria-hidden="true"></span><span class="line__name">Wairarapa</span><span class="line__go"><span class="sr-only">Get a quote in Wairarapa</span><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></span></a></li>
         </ol>
       </div>
-      <p class="areas__note"><span class="fig">FIG. 06</span> Schematic only, not to scale</p>
+      <p class="areas__note"><span class="fig">FIG. 05</span> Schematic only, not to scale</p>
     </div>
   </section>
 
@@ -372,8 +416,8 @@
       <p class="careers__lead reveal">Let’s chat to see if you’re the right fit.</p>
       <div class="careers__cta reveal">
         <a class="btn btn--primary" href="mailto:inlinedrainage@outlook.com?subject=Careers%20at%20Inline%20Drainage">Email us <svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></a>
-        <a class="btn btn--ghost" href="tel:+64277367553"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg> Call Ben</a>
-        <a class="btn btn--ghost" href="tel:+64272940952"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg> Call Patrick</a>
+        <a class="btn btn--ghost" href="tel:+64277367553"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg> Call Ben<span class="sr-only"> Carson 027 7367 553</span></a>
+        <a class="btn btn--ghost" href="tel:+64272940952"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg> Call Patrick<span class="sr-only"> Carson 027 2940 952</span></a>
       </div>
     </div>
   </section>
@@ -384,7 +428,7 @@
       <div class="contact__intro">
         <p class="eyebrow reveal">Contact</p>
         <h2 class="h2 contact__title" id="contact-title" data-split>Get a quote</h2>
-        <p class="contact__lead reveal">Call Ben or Patrick, email us, or send a quote request below.</p>
+        <p class="contact__lead reveal">Feel free to reach out to us to learn more about how we operate and how we can help you with your projects. We will be happy to discuss and advise you on all things drain laying</p>
 
         <div class="callstack reveal">
           <a class="call call--huge" href="tel:+64277367553" data-glow>
@@ -401,27 +445,40 @@
 
         <ul class="contact__meta reveal">
           <li><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><a class="textlink" href="mailto:inlinedrainage@outlook.com">inlinedrainage@outlook.com</a></li>
-          <li><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><address>Mangaroa Valley Road, Upper Hutt, NZ, 5471</address></li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><address>Mangaroa Valley Road, <span class="nowrap">Upper Hutt, NZ, 5471</span></address></li>
         </ul>
       </div>
 
       <div class="contact__panel glass glass--blur reveal">
-        <form class="quote" id="quote-form" action="mailto:inlinedrainage@outlook.com" method="post" enctype="text/plain" novalidate>
-          <h3 class="quote__title">Send a quote request</h3>
+        <!-- no JavaScript: the form (hidden by sections.css without the js class) cannot open an email draft, so say where to reach us instead -->
+        <noscript>
+          <div class="quote-nojs">
+            <h3 class="quote__title">Contact us directly</h3>
+            <p>The quote form needs JavaScript, which is switched off in this browser. To ask for a quote, email <a class="textlink" href="mailto:inlinedrainage@outlook.com">inlinedrainage@outlook.com</a> or call:</p>
+            <div class="callstack">
+              <a class="call" href="tel:+64277367553"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Ben Carson</span><span class="call__num">027 7367 553</span></span></a>
+              <a class="call" href="tel:+64272940952"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Patrick Carson</span><span class="call__num">027 2940 952</span></span></a>
+            </div>
+          </div>
+        </noscript>
+        <!-- no action: contact.js builds the email draft. method="dialog" makes a native submit (if that script ever failed to load) do nothing,
+             rather than reload the page with the visitor's name, phone and email in the address bar -->
+        <form class="quote" id="quote-form" method="dialog" novalidate>
+          <h3 class="quote__title">Write your quote request</h3>
           <div class="field">
             <label for="f-name">Name <span class="req">required</span></label>
-            <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="err-name">
+            <input id="f-name" name="name" type="text" autocomplete="name" maxlength="60" required aria-describedby="err-name">
             <p class="field__err" id="err-name" hidden></p>
           </div>
           <div class="field-row">
             <div class="field">
               <label for="f-phone">Phone</label>
-              <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-describedby="contact-hint err-phone">
+              <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" aria-describedby="contact-hint err-phone">
               <p class="field__err" id="err-phone" hidden></p>
             </div>
             <div class="field">
               <label for="f-email">Email</label>
-              <input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="contact-hint err-email">
+              <input id="f-email" name="email" type="email" autocomplete="email" maxlength="70" aria-describedby="contact-hint err-email">
               <p class="field__err" id="err-email" hidden></p>
             </div>
           </div>
@@ -461,6 +518,8 @@
           <p class="form__error" id="form-error" role="alert" hidden></p>
           <p class="form__note"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><span>This opens your email app with the message ready to send to inlinedrainage@<wbr>outlook.com. Nothing is sent from this page, so press send in your email app. If no email app opens, you can copy the message or call instead.</span></p>
           <button class="btn btn--primary btn--lg btn--block" type="submit">Open email draft <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <!-- the full stop is inside the nowrap span: .textlink is inline-block, so on a 360px phone the stop could wrap onto a line of its own -->
+          <p class="form__privacy">We use these details to reply to you and prepare your quote. Read our <span class="nowrap"><a class="textlink" href="/privacy/">privacy policy</a>.</span></p>
         </form>
 
         <section class="sent" id="quote-sent" tabindex="-1" aria-labelledby="sent-title" hidden>
@@ -471,7 +530,7 @@
             <div><dt>To</dt><dd>inlinedrainage@outlook.com</dd></div>
             <div><dt>Subject</dt><dd id="sent-subject"></dd></div>
           </dl>
-          <pre class="sent__msg" id="sent-msg" tabindex="0" aria-label="Composed message"></pre>
+          <pre class="sent__msg" id="sent-msg" tabindex="0" role="region" aria-label="Composed message"></pre>
           <p class="sent__note" id="sent-note" hidden></p>
           <div class="sent__actions">
             <button class="btn btn--primary" type="button" id="copy-msg"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg> <span id="copy-label">Copy message</span></button>
@@ -491,7 +550,7 @@
   <div class="container footer__grid">
     <div class="footer__brand">
       <img src="assets/img/logo-wide-light-520.webp" width="520" height="169" alt="Inline Drainage" loading="lazy" decoding="async">
-      <p>Experienced registered drain layers in Wellington, New Zealand.</p>
+      <p>Experienced Registered drain layers in Wellington, New Zealand</p>
     </div>
     <div class="footer__col">
       <h2 class="footer__h">Address</h2>
