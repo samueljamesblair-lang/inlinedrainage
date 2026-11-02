@@ -261,6 +261,11 @@ h1, h2, h3 {
 .call--huge .call__ico .i { width: 24px; height: 24px; }
 .call--huge .call__who { font-size: .74rem; }
 .call--huge .call__num { font: 500 clamp(1.3rem, 1rem + 1.5vw, 2rem)/1.1 var(--f-display); letter-spacing: -.02em; }
+@media (max-width: 359px) {   /* 320px phones: icon, number and arrow all have to fit the 280px tile */
+  .call--huge { padding: 12px 16px 12px 12px; gap: 10px; }
+  .call--huge .call__ico { width: 48px; height: 48px; }
+  .call--huge .call__num { font-size: 1.1rem; }
+}
 .call__go { margin-left: auto; color: var(--red-hot); transition: transform .5s var(--e-out); }
 .call:hover .call__go { transform: translate3d(5px, 0, 0); }
 

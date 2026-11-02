@@ -9,7 +9,9 @@
 .statement__text {
   font: 500 clamp(1.5rem, .8rem + 2.4vw, 3.1rem)/1.24 var(--f-display); letter-spacing: -.032em; text-wrap: pretty;
 }
-.js:not(.reduce) [data-lit] .lw { opacity: .2; transition: opacity .6s var(--e-out); }
+/* The sentence is plain, full-contrast text without JS or with reduced motion. With motion on, words ahead of the reader
+   sit a little softer (still ~8:1 against the page) and brighten as the line is read: an enhancement, never a gate. */
+.js:not(.reduce) [data-lit] .lw { opacity: .66; transition: opacity .6s var(--e-out); }
 .js:not(.reduce) [data-lit] .lw.is-on { opacity: 1; }
 .statement__side { display: grid; gap: 28px; justify-items: start; }
 .mission { padding-left: 22px; border-left: 2px solid var(--red); display: grid; gap: 14px; max-width: 34ch; }
@@ -49,11 +51,10 @@
 .stop[data-stop="5"] { --pos: 36% 55%; }
 .stop[data-stop="6"] { --pos: 50% 50%; }
 
-/* phones: portrait photos fill the screen, so repeated photos are reframed with a zoom focus instead */
+/* phones: portrait photos fill the screen, so repeated photos are reframed with a zoom focus instead
+   (services 3 and 4 use the 750px gallery-1 photo, which is never zoomed: see "native size" below) */
 @media (max-width: 899px) {
   .stop[data-stop="1"] { --zoom: 1.5; --origin: 38% 88%; }
-  .stop[data-stop="2"] { --zoom: 1.55; --origin: 64% 82%; }
-  .stop[data-stop="3"] { --zoom: 1.55; --origin: 50% 10%; }
   .stop[data-stop="4"] { --zoom: 1.5; --origin: 56% 22%; }
 }
 
@@ -88,6 +89,30 @@
 .story.is-pinned .stop__media img {
   position: absolute; left: -3%; top: -3%; width: 106%; height: 106%; max-width: none; will-change: transform;
   transform-origin: var(--origin, 50% 50%);
+}
+
+/* native size: services 3 and 4 use gallery-1, a 750 x 1000 px source that went soft when stretched across the stage.
+   It is capped at 660 x 880 px here (= 750 x 1000 at the end of the x1.12 push-in), so it is never drawn larger than
+   native. A stage wider than the photo gets a sharp portrait graded into the dark on the right, with its subject lifted
+   above the card (--fy: where the subject sits on the stage, --fs: where it sits in the photo, --px: horizontal focus on
+   phones); a phone is narrower than the photo, so there it still fills the screen. The layer is opaque black so the
+   previous photo dissolves into it instead of popping away. */
+.story.is-pinned .stop--native .stop__media { background: var(--black); }
+.story.is-pinned .stop--native .stop__media img {
+  left: auto; right: -3%; width: min(106%, 660px); height: min(106%, 880px);
+  top: calc(var(--fy) - var(--fs) * min(106%, 880px)); object-position: var(--px) 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 84%, transparent 100%);
+}
+.story.is-pinned .stop[data-stop="2"] { --fy: 36%; --fs: .56; --px: 78%; }
+.story.is-pinned .stop[data-stop="3"] { --fy: 28%; --fs: .2; --px: 36%; }
+@media (min-width: 623px) {
+  .story.is-pinned .stop--native .stop__media img {
+    width: 660px; height: 880px; top: calc(var(--fy) - var(--fs) * 880px);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 38%), linear-gradient(180deg, transparent 0, #000 12%, #000 84%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 38%), linear-gradient(180deg, transparent 0, #000 12%, #000 84%, transparent 100%);
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
 }
 .story.is-pinned .story__shade {
   display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -222,7 +247,8 @@
   content: ""; position: absolute; left: var(--gutter); right: var(--gutter); top: 0; height: 1px;
   background: linear-gradient(90deg, rgba(255, 48, 25, 0), rgba(255, 48, 25, .7), rgba(255, 48, 25, 0));
 }
-.clog__inner { display: grid; gap: clamp(36px, 5vw, 72px); align-items: center; }
+/* minmax(0, 1fr): an auto track took the viz's min-height x 16/11 ratio (349px) as its minimum and pushed the call tiles off phones */
+.clog__inner { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(36px, 5vw, 72px); align-items: center; }
 .clog__copy { display: grid; gap: 24px; justify-items: start; }
 .clog__title { font-size: clamp(2.7rem, 1rem + 5.4vw, 6.2rem); letter-spacing: -.048em; line-height: .98; }
 .clog__text { color: rgba(255, 255, 255, .84); font-size: clamp(1.06rem, 1rem + .4vw, 1.3rem); max-width: 28ch; }

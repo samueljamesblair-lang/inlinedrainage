@@ -149,6 +149,9 @@ html:not(.js) .node::before {
   .blocked__act { align-self: start; grid-template-columns: 1fr 1fr; }
   .blocked__act .btn--line { grid-column: 1 / -1; }
 }
+@media (min-width: 900px) and (max-width: 1099px) {          /* the call buttons are only ~150-190px wide here: keep the phone number inside */
+  .blocked .btn--stack { padding-inline: 18px; }
+}
 @media (min-width: 1180px) {
   .blocked__panel { padding: 56px 64px; }
 }
@@ -373,11 +376,10 @@ html:not(.js) .node::before {
 }
 .confirm__act { display: flex; flex-wrap: wrap; gap: 12px; }
 .confirm__status { min-height: 1.4em; font: 700 12px/1.4 var(--ff-mono); letter-spacing: .08em; color: #8be0a4; }
-.confirm__calls { display: grid; gap: 10px; }
+.confirm__calls { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }   /* two tiles only when each has room for its number */
 
 @media (min-width: 560px) {
   .field-row { grid-template-columns: 1fr 1fr; }
-  .confirm__calls { grid-template-columns: 1fr 1fr; }
 }
 @media (min-width: 960px) {
   .contact__grid { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 80px; align-items: start; }
@@ -414,7 +416,7 @@ html:not(.js) .node::before {
 .tblock__c--credit { padding-block: 4px 8px; }
 .preview-note { font: 500 11px/1.5 var(--ff-mono); letter-spacing: .1em; text-transform: uppercase; border-bottom: 1px dashed var(--hair); }
 .preview-note a {
-  display: inline-flex; align-items: center; min-height: 44px; color: var(--t3);
+  display: inline-flex; align-items: center; min-height: 44px; color: var(--t3); text-wrap: balance;
   text-decoration: underline; text-decoration-color: var(--red); text-decoration-thickness: 1px; text-underline-offset: 4px;
 }
 .preview-note a:hover { color: var(--t1); }

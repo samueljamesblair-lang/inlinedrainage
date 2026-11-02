@@ -183,6 +183,11 @@ button { cursor: pointer; }
   .hdr__logo img { height: 24px; }
   .hdr__quote { padding: 0 10px; font-size: 14px; }
 }
+@media (max-width: 339px) {            /* 320px phones: the controls above add up to 331px, so tighten a few more pixels (targets stay 46px) */
+  .hdr__in, .hdr__act { gap: 4px; }
+  .hdr__logo img { height: 22px; }
+  .hdr__quote { padding: 0 8px; }
+}
 @media (min-width: 720px) {
   .hdr__logo img { height: 34px; }
   .hdr__in { padding: 0 var(--wrap-r) 0 var(--wrap-l); }

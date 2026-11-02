@@ -12,6 +12,8 @@
 }
 .shot--a .shot__frame, .shot--c .shot__frame { aspect-ratio: 3 / 4; }
 .shot--b .shot__frame { aspect-ratio: 4 / 3; }
+/* shot c is the 750px gallery-1 photo: in the single-column layout its frame stops at 640px so the photo is never drawn larger than native */
+@media (max-width: 899px) { .shot--c { max-width: 640px; } }
 .shot__frame img {
   position: absolute; left: 0; top: -8%; width: 100%; height: 116%; max-width: none; object-fit: cover; will-change: transform;
 }
@@ -127,7 +129,7 @@
     radial-gradient(50% 58% at 100% 100%, rgba(255, 48, 25, .15), transparent 70%);
 }
 .contact:focus { outline: none; }
-.contact__grid { display: grid; gap: clamp(40px, 6vw, 88px); align-items: start; }
+.contact__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(40px, 6vw, 88px); align-items: start; }
 .contact__intro { display: grid; gap: 26px; justify-items: start; }
 .contact__title { font-size: clamp(2.7rem, 1rem + 5.2vw, 6rem); letter-spacing: -.048em; line-height: .98; }
 .contact__lead { color: rgba(255, 255, 255, .84); font-size: clamp(1.05rem, 1rem + .3vw, 1.25rem); max-width: 30ch; }
@@ -221,7 +223,7 @@
 .footer__brand p { color: var(--muted); max-width: 30ch; }
 .footer__h { font: 700 .7rem/1 var(--f-body); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
 .footer__col ul { display: grid; gap: 12px; }
-.footer__col a { display: inline-block; padding: 9px 0; margin: -9px 0; }
+.footer__col a { display: inline-block; padding: 10px 0; margin: -10px 0; }
 .footer__col a, .footer__col address { color: rgba(255, 255, 255, .9); text-decoration: none; line-height: 1.6; }
 .footer__col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--red-hot); }
 .footer__tag { display: block; color: var(--dim); font-size: .78rem; margin-top: 2px; }
@@ -232,9 +234,37 @@
 .footer__base a { color: var(--muted); text-decoration: none; display: inline-flex; gap: 8px; align-items: center; min-height: 44px; }
 .footer__base a:hover { color: #fff; }
 .i--up { transform: rotate(-90deg); }
+
+/* last lines of the page: the design-preview note (removed once a design is chosen) and the builder credit.
+   On phones the footer's bottom padding keeps them clear of the fixed action bar. Every link is 44px tall; the email
+   is nowrap so it can only break at its <wbr>, and it fits on one line at 320px. */
+.footer__end { display: grid; gap: 2px; padding: 6px 0 18px; border-top: 1px solid var(--line); }
+.preview-note { font: 600 .78rem/1.4 var(--f-body); letter-spacing: .02em; }
+.preview-note a {
+  display: inline-flex; align-items: center; gap: .65em; min-height: 44px; color: var(--dim);
+  text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .26); text-underline-offset: 4px;
+}
+.preview-note a::before { content: ""; width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--red); }
+.preview-note a:hover { color: #fff; text-decoration-color: var(--red-hot); }
+.site-credit {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 32px;
+  color: var(--muted); font-size: .86rem; line-height: 1.5;
+}
+.site-credit > span:first-child { padding-block: 8px; }
+.site-credit strong { color: #fff; font-weight: 700; }
+.credit-contact { display: flex; flex-wrap: wrap; align-items: center; gap: 0 28px; }
+.credit-contact a {
+  display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); text-decoration: none; white-space: nowrap;
+}
+.credit-contact a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--red-hot); }
+.credit-contact .credit-cta {
+  padding-block: 6px; color: #fff; font-weight: 700; white-space: normal; text-wrap: balance;
+  text-decoration: underline; text-decoration-color: rgba(255, 90, 68, .7); text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+}
+.credit-contact .credit-cta:hover { text-decoration-color: var(--red-hot); }
 .footer__mark {
   font: 800 clamp(3.5rem, 15vw, 19rem)/.8 var(--f-display); letter-spacing: -.055em; text-align: center; white-space: nowrap;
-  color: transparent; user-select: none; pointer-events: none; margin: 12px 0 -.1em;
+  color: transparent; user-select: none; pointer-events: none; margin: 12px 0 .1em;
   background: linear-gradient(180deg, rgba(255, 255, 255, .13) 0%, rgba(255, 255, 255, .05) 55%, rgba(255, 48, 25, .12) 100%);
   -webkit-background-clip: text; background-clip: text;
 }

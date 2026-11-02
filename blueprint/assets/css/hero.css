@@ -116,8 +116,13 @@ html.js:not(.ready) .ring__in-fill, html.js:not(.ready) .ring__port { animation:
   .ringbox { width: min(100%, 320px); }
   .js .hero:not(.is-done) .half--w { transform: translate(-104px, -42px) rotate(-34deg); }
   .js .hero:not(.is-done) .half--r { transform: translate(112px, 50px) rotate(41deg); }
-  .hero__cta { grid-template-columns: auto 1fr 1fr; align-items: stretch; }
+  .hero__cta { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .hero__quote { grid-column: 1 / -1; justify-self: start; min-width: 260px; }
   .tag__x { display: inline; }
+}
+@media (min-width: 720px) {          /* three across only once each call tile has room for its number (~220px) */
+  .hero__cta { grid-template-columns: auto 1fr 1fr; }
+  .hero__quote { grid-column: auto; justify-self: stretch; min-width: 0; }
 }
 
 @media (min-width: 960px) {
