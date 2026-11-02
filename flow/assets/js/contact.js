@@ -105,7 +105,9 @@
     noteEl.textContent = truncated ? 'Your message was long, so the email draft carries a shortened version. Use Copy message to send the whole thing.' : '';
     copyLabel.textContent = 'Copy message';
     var title = $('sent-title');
-    sent.scrollIntoView({ behavior: I.reduced && I.reduced() ? 'auto' : 'smooth', block: 'nearest' });
+    /* the panel is taller than a phone screen: line its TOP up under the header (html scroll-padding-top) so the heading and
+       the "Nothing has been sent yet" line are what the visitor sees, not the message preview at the bottom */
+    sent.scrollIntoView({ behavior: I.reduced && I.reduced() ? 'auto' : 'smooth', block: 'start' });
     if (title) title.focus({ preventScroll: true });
   }
   function showForm() {
@@ -176,6 +178,6 @@
   $('edit-msg').addEventListener('click', function () {
     showForm();
     f.name.focus({ preventScroll: true });
-    form.scrollIntoView({ behavior: I.reduced && I.reduced() ? 'auto' : 'smooth', block: 'nearest' });
+    form.scrollIntoView({ behavior: I.reduced && I.reduced() ? 'auto' : 'smooth', block: 'start' });   // same as showSent: top of the panel, not its foot
   });
 })();

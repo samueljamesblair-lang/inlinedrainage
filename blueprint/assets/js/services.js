@@ -5,7 +5,7 @@
    transform + opacity only, so nothing animates width/height.
    Without JS every plate is simply open (the CSS only collapses them under html.js).            */
 
-export function initServices({ section, hdrH }) {
+export function initServices({ section, hdrH, bar }) {
   const list = section.querySelector('#plates');
   if (!list) return;
   const plates = [...list.querySelectorAll('.plate')];
@@ -20,6 +20,7 @@ export function initServices({ section, hdrH }) {
   let glide = 0;           // id of the glide currently allowed to clean up after itself
 
   const btnOf = (p) => p.querySelector('.plate__btn');
+  plates.forEach((p) => btnOf(p).setAttribute('aria-expanded', p === current ? 'true' : 'false'));      // the markup says "open" (without JS every plate is); only one stays open now
 
   function set(next, by) {
     if (!next || next === current) return;
@@ -68,24 +69,31 @@ export function initServices({ section, hdrH }) {
       plates.forEach((p) => { p.style.transition = ''; });
     }
 
-    if (by !== 'hover') keepInView(plates.indexOf(next), last[plates.indexOf(next)]);
+    if (by !== 'hover') keepInView(plates.indexOf(next), last[plates.indexOf(next)], by === 'click');
   }
 
-  // after tap / keyboard, make sure the opened plate (and its CTA) is on screen
-  function keepInView(idx, top) {
+  // after tap / keyboard, make sure the opened plate is on screen. On a short phone (under ~700px high) an open plate is taller than the
+  // window, so heading and CTA cannot both show: a tap (toCta) brings the CTA clear of the sticky bar, while a key press keeps the focused
+  // heading in view and leaves the CTA one Tab away (scroll-padding-bottom keeps it above the bar then)
+  function keepInView(idx, top, toCta) {
     const plate = plates[idx];
     const h = plate.offsetHeight;
     const vh = window.innerHeight;
     const topLimit = hdrH() + 10;
-    const bottomLimit = vh - (window.innerWidth < 760 ? 74 : 24);
+    const barOn = !!bar && bar.offsetHeight > 0;                  // the quick-contact bar only exists on phones
+    const bottomLimit = (barOn ? Math.min(vh, bar.getBoundingClientRect().top) - 16 : vh - 24);
     let dy = 0;
     if (top < topLimit) dy = top - topLimit;
     else if (top + h > bottomLimit) dy = Math.min(top + h - bottomLimit, top - topLimit);
+    if (toCta) {
+      const cta = plate.querySelector('.plate__txt .btn');
+      if (cta) dy = Math.max(dy, top + cta.offsetTop + cta.offsetHeight - bottomLimit);      // layout offsets: the glide's transforms are not in them
+    }
     if (Math.abs(dy) > 2) window.scrollBy({ top: dy, behavior: reduce.matches ? 'auto' : 'smooth' });
   }
 
   plates.forEach((p) => {
-    btnOf(p).addEventListener('click', () => set(p, 'click'));
+    btnOf(p).addEventListener('click', (e) => set(p, e.detail === 0 ? 'key' : 'click'));      // detail 0 = Enter / Space
     btnOf(p).addEventListener('keydown', (e) => {
       const i = plates.indexOf(p);
       let n = -1;

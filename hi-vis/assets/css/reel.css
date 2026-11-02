@@ -80,13 +80,15 @@
 
 /* closing sales panel */
 .reelcta {
+  --w: min(max(calc(var(--ph) * .9), 270px), 84vw);   /* never narrower than its button and call line need */
   position: relative;
   display: flex; flex-direction: column; justify-content: flex-end; gap: 14px;
-  width: min(calc(var(--ph) * .9), 84vw);
-  aspect-ratio: 9 / 10;
+  width: var(--w);
+  min-height: calc(var(--w) * 10 / 9);      /* the 9 / 10 shape, as a minimum: a taller stack grows the panel instead of being cut off */
   padding: 24px calc(var(--sl) + 14px) 22px calc(var(--sl) + 8px);
   background: var(--red); color: var(--black);
   overflow: hidden; isolation: isolate;
+  container-type: inline-size;              /* the text below sizes itself to the room between the slanted edges (100cqi) */
   clip-path: polygon(var(--sl) 0, 100% 0, calc(100% - var(--sl)) 100%, 0 100%);
 }
 .reelcta .panel__num--dark {
@@ -98,18 +100,28 @@
 .reelcta__title {
   position: relative;
   font: 400 clamp(2.8rem, calc(var(--ph) * .15), 5.6rem)/.9 var(--f-display);
+  /* "Got a job" is 3.75em wide: never larger than the panel can hold on one line, whatever the stage height says */
+  font-size: max(2rem, min(clamp(2.8rem, calc(var(--ph) * .15), 5.6rem), calc(100cqi / 3.85)));
   text-transform: uppercase;
 }
 .reelcta__actions { position: relative; display: grid; gap: 6px; }
-.reelcta .btn { width: 100%; padding-inline: 18px; }
+.reelcta .btn {
+  width: 100%; padding-inline: 18px;
+  font-size: max(1.05rem, min(1.5rem, calc((100cqi - 36px) / 6.95)));     /* text, gap and arrow are 6.86em wide */
+}
 .reelcta__call {
   display: inline-flex; align-items: center; gap: .6em;
   min-height: 48px;
   font-weight: 700; font-size: 1.05rem;
+  font-size: max(.9rem, min(1.05rem, calc(100cqi / 11.4)));               /* icon, gap and text are 11.1em wide */
   text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .2em;
 }
 .reelcta__call b { font-weight: 700; white-space: nowrap; }
 .reelcta__call .ico { width: 1.1em; height: 1.1em; }
+/* short viewports: the outlined 05 would land on the eyebrow text, so the decoration goes */
+@media (max-height: 680px) {
+  .reelcta .panel__num--dark { display: none; }
+}
 
 /* ======================================================================
    PINNED MODE (class added by reel.js)

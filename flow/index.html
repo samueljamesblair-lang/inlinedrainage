@@ -40,6 +40,7 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -114,6 +115,7 @@
             <a class="call" href="tel:+64272940952"><span class="call__ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="call__t"><span class="call__who"><span class="sr-only">Call </span>Patrick<span class="sr-only"> Carson</span></span><span class="call__num">027 2940 952</span></span></a>
           </div>
         </div>
+        <button class="motion-toggle reveal" type="button" aria-pressed="false" data-motion-toggle hidden><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg><span>Pause animation</span></button>
       </div>
       <figure class="hero__media reveal" data-hero-media>
         <div class="hero__frame" data-hero-frame>
@@ -196,21 +198,23 @@
         <div class="story__count" aria-hidden="true"><span class="roll" data-roll="1" data-pad="2" data-manual>01</span><span class="story__of"> / 07</span></div>
         <p class="story__hint" aria-hidden="true"><svg class="i" aria-hidden="true"><use href="#i-down"/></svg> Keep scrolling to follow the line</p>
 
+        <!-- sizes on the photo layers: each is cover-fitted to the stage and pushed in, so it is DRAWN about 120vw wide on desktop and
+             300vw on a phone (a landscape photo filling a portrait screen). Say so, or the browser loads a file far too small for it. -->
         <ol class="story__stops">
           <li class="stop" id="svc-1" data-stop="0">
             <figure class="stop__media">
-              <img src="assets/img/story-careers-2-1000.webp" srcset="assets/img/story-careers-2-640.webp 640w, assets/img/story-careers-2-1000.webp 1000w, assets/img/story-careers-2-1400.webp 1400w" sizes="(min-width: 900px) 70vw, 62vw" width="1400" height="1050" alt="Yellow Hyundai excavator and an Inline Drainage service truck on a gravel site, with crew in the distance" loading="lazy" decoding="async">
+              <img src="assets/img/story-careers-2-1000.webp" srcset="assets/img/story-careers-2-640.webp 640w, assets/img/story-careers-2-1000.webp 1000w, assets/img/story-careers-2-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1050" alt="Yellow Hyundai excavator and an Inline Drainage service truck on a gravel site, with crew in the distance" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 01</span></p>
               <h3 class="stop__title">Development Siteworks</h3>
-              <p class="stop__text">Experience creating services for new or refurbished sites, delivering on time and on budget and laying a solid foundation for the remainder of the development.</p>
+              <p class="stop__text">Experience creating services for new or refurbished sites, laying a solid foundation for the remainder of the development.</p>
               <a class="btn btn--primary" href="#contact" data-service="Development Siteworks">Get a quote<span class="sr-only"> for Development Siteworks</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             </div>
           </li>
           <li class="stop" id="svc-2" data-stop="1">
             <figure class="stop__media">
-              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 70vw, 62vw" width="1400" height="1867" alt="White concrete pipe in the foreground of a timber-shored trench, with a worker in hi-vis" loading="lazy" decoding="async">
+              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1867" alt="White concrete pipe in the foreground of a timber-shored trench, with a worker in hi-vis" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 02</span></p>
@@ -243,7 +247,7 @@
           </li>
           <li class="stop" id="svc-5" data-stop="4">
             <figure class="stop__media">
-              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 70vw, 62vw" width="1400" height="1867" alt="Worker in hi-vis yellow in a shored trench, with an orange excavator and an Inline truck behind" loading="lazy" decoding="async">
+              <img src="assets/img/story-gallery-3-1000.webp" srcset="assets/img/story-gallery-3-640.webp 640w, assets/img/story-gallery-3-1000.webp 1000w, assets/img/story-gallery-3-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1867" alt="Worker in hi-vis yellow in a shored trench, with an orange excavator and an Inline truck behind" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 05</span></p>
@@ -254,7 +258,7 @@
           </li>
           <li class="stop" id="svc-6" data-stop="5">
             <figure class="stop__media">
-              <img src="assets/img/story-hero-bg-1000.webp" srcset="assets/img/story-hero-bg-640.webp 640w, assets/img/story-hero-bg-1000.webp 1000w, assets/img/story-hero-bg-1400.webp 1400w" sizes="(min-width: 900px) 70vw, 62vw" width="1400" height="933" alt="View over Wellington city and harbour from a bush-covered hillside under an overcast sky" loading="lazy" decoding="async">
+              <img src="assets/img/story-hero-bg-1000.webp" srcset="assets/img/story-hero-bg-640.webp 640w, assets/img/story-hero-bg-1000.webp 1000w, assets/img/story-hero-bg-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="933" alt="View over Wellington city and harbour from a bush-covered hillside under an overcast sky" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 06</span></p>
@@ -265,7 +269,7 @@
           </li>
           <li class="stop" id="svc-7" data-stop="6">
             <figure class="stop__media">
-              <img src="assets/img/story-gallery-2-1000.webp" srcset="assets/img/story-gallery-2-640.webp 640w, assets/img/story-gallery-2-1000.webp 1000w, assets/img/story-gallery-2-1400.webp 1400w" sizes="(min-width: 900px) 70vw, 62vw" width="1400" height="1050" alt="Orange Kubota excavator arm in the foreground with an Inline Drainage tipper truck behind" loading="lazy" decoding="async">
+              <img src="assets/img/story-gallery-2-1000.webp" srcset="assets/img/story-gallery-2-640.webp 640w, assets/img/story-gallery-2-1000.webp 1000w, assets/img/story-gallery-2-1400.webp 1400w" sizes="(min-width: 900px) 120vw, 300vw" width="1400" height="1050" alt="Orange Kubota excavator arm in the foreground with an Inline Drainage tipper truck behind" loading="lazy" decoding="async">
             </figure>
             <div class="stop__body">
               <p class="stop__num"><span class="fig">SERVICE 07</span></p>
@@ -455,7 +459,7 @@
             <textarea id="f-msg" name="message" rows="5" maxlength="1500" placeholder="Tell us about the job: what needs doing and where."></textarea>
           </div>
           <p class="form__error" id="form-error" role="alert" hidden></p>
-          <p class="form__note"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><span>This opens your email app with the message ready to send to inlinedrainage@outlook.com. Nothing is sent from this page, so press send in your email app. If no email app opens, you can copy the message or call instead.</span></p>
+          <p class="form__note"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><span>This opens your email app with the message ready to send to inlinedrainage@<wbr>outlook.com. Nothing is sent from this page, so press send in your email app. If no email app opens, you can copy the message or call instead.</span></p>
           <button class="btn btn--primary btn--lg btn--block" type="submit">Open email draft <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></button>
         </form>
 
@@ -504,8 +508,8 @@
     <div class="footer__col">
       <h2 class="footer__h">Policies</h2>
       <ul>
-        <li><a href="https://www.inlinedrainage.co.nz/s/Environmental-Policy_October_2023.pdf" target="_blank" rel="noopener noreferrer">Environmental Policy <span class="footer__tag">PDF, October 2023</span></a></li>
-        <li><a href="https://www.inlinedrainage.co.nz/s/Health-Safety-Policy_October_2023.pdf" target="_blank" rel="noopener noreferrer">Health &amp; Safety Policy <span class="footer__tag">PDF, October 2023</span></a></li>
+        <li><a href="/policies/Environmental-Policy_October_2023.pdf" target="_blank" rel="noopener noreferrer">Environmental Policy <span class="footer__tag">PDF, October 2023</span></a></li>
+        <li><a href="/policies/Health-Safety-Policy_October_2023.pdf" target="_blank" rel="noopener noreferrer">Health &amp; Safety Policy <span class="footer__tag">PDF, October 2023</span></a></li>
         <li><a href="/privacy/">Privacy Policy</a></li>
       </ul>
     </div>

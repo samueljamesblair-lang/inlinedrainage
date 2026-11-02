@@ -87,6 +87,18 @@
 .callpair { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero .call { backdrop-filter: none; }
 
+/* the visitor's pause switch (main.js): the page-wide equivalent of prefers-reduced-motion */
+.motion-toggle {
+  display: inline-flex; align-items: center; gap: .7em; min-height: 44px; margin-top: clamp(10px, 2vh, 20px); padding: 0 18px 0 14px;
+  border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, .04); color: var(--muted);
+  font: 700 .7rem/1 var(--f-body); letter-spacing: .16em; text-transform: uppercase; -webkit-tap-highlight-color: transparent;
+  transition: color .3s, background-color .3s, border-color .3s;
+}
+.motion-toggle[hidden] { display: none; }
+.motion-toggle .i { width: 15px; height: 15px; color: var(--red-hot); }
+@media (hover: hover) { .motion-toggle:hover { color: #fff; border-color: rgba(255, 255, 255, .32); } }
+.motion-toggle[aria-pressed="true"] { color: #fff; background: rgba(255, 48, 25, .16); border-color: rgba(255, 90, 68, .6); }
+
 /* ----- media monolith ----- */
 .hero__media { position: relative; z-index: 1; justify-self: end; width: min(100%, 540px); perspective: 1300px; --d: 140ms; }
 .hero__frame {
@@ -165,6 +177,11 @@
 @media (max-width: 400px) {
   .hero__eyebrow { font-size: .64rem; letter-spacing: .17em; text-wrap: balance; }
 }
+@media (max-width: 399px) {   /* 360-393px phones: the number was wider than its tile (cut off at 360); less padding and type gives it its full width on one line */
+  .hero .call { padding-right: 8px; gap: 8px; }
+  .hero .call__ico { width: 34px; height: 34px; }
+  .hero .call__num { font-size: clamp(.84rem, 3.8vw, .95rem); }
+}
 @media (max-width: 359px) {
   .hero .call__num { font-size: .86rem; }
   .hero .call__ico { display: none; }
@@ -178,7 +195,7 @@
    ========================================================================= */
 .trust { position: relative; z-index: 5; margin-top: clamp(-84px, -6vw, -28px); padding-bottom: clamp(28px, 5vw, 64px); }
 .trust__panel {
-  display: grid; gap: 26px; padding: clamp(20px, 3vw, 40px);
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: clamp(20px, 3vw, 40px);
   background: linear-gradient(180deg, rgba(30, 30, 34, .78), rgba(14, 14, 16, .9));
   -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
 }
@@ -190,7 +207,8 @@
 }
 .stat__plus { color: var(--red); margin-left: .03em; }
 .stat__lbl { font: 700 .72rem/1.5 var(--f-body); letter-spacing: .15em; text-transform: uppercase; color: var(--muted); max-width: 30ch; }
-.stat__word { font: 500 clamp(1.25rem, 1rem + 1vw, 1.8rem)/1.08 var(--f-display); letter-spacing: -.025em; white-space: nowrap; }
+.stat__word { font: 500 clamp(1.25rem, 1rem + 1vw, 1.8rem)/1.08 var(--f-display); letter-spacing: -.025em; white-space: nowrap; overflow-wrap: anywhere; }
+@media (max-width: 1439px) { .stat__word { white-space: normal; } }   /* one line only where it clears the logos divider (about 1420px up); below that it wraps at the hyphen, as on phones */
 .stat--word { padding-top: 20px; border-top: 1px solid var(--line); }
 
 .trust__logos { display: grid; gap: 22px; align-content: center; }
@@ -203,26 +221,26 @@
   display: grid; place-items: center; height: 60px; padding: 0 10px; border-radius: 14px; background: #fff; min-width: 0;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06), 0 14px 30px -16px rgba(0, 0, 0, .7);
 }
-.logo img { width: auto; max-width: 100%; }
+/* height is a ceiling (max-height), never a fixed value: a fixed height with a width clamped to the track squashed the bitmaps sideways */
+.logo img { width: auto; max-width: 100%; height: auto; object-fit: contain; }
 .logo--impac { padding: 0; background: transparent; box-shadow: none; border-radius: 10px; overflow: hidden; }
-.logo--impac img { height: 60px; }
-.logo--ccnz img { height: 28px; }
-.logo--wcc img { height: 24px; }
-.logo--ww img { height: 21px; }
-.logo--uhcc img { height: 38px; }
+.logo--impac img { max-height: 60px; }
+.logo--ccnz img { max-height: 28px; }
+.logo--wcc img { max-height: 24px; }
+.logo--ww img { max-height: 21px; }
+.logo--uhcc img { max-height: 38px; }
 
 @media (min-width: 640px) {
   .trust__stats { grid-template-columns: auto minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: end; }
   .stat--word { padding: 0 0 4px clamp(28px, 4vw, 56px); border-top: 0; border-left: 1px solid var(--line); }
-  .trust__logos { grid-template-columns: auto minmax(0, 1fr); gap: 22px 28px; align-items: end; }
   .logo { height: 68px; padding: 0 20px; border-radius: 16px; }
   .logo--impac { padding: 0; }
-  .logo--impac img { height: 68px; }
-  .logo--ccnz img { height: 34px; }
-  .logo--wcc img { height: 30px; }
-  .logo--ww img { height: 27px; }
-  .logo--uhcc img { height: 44px; }
-  .trust__group--badges .logos { grid-template-columns: repeat(2, auto); }
+  .logo--impac img { max-height: 68px; }
+  .logo--ccnz img { max-height: 34px; }
+  .logo--wcc img { max-height: 30px; }
+  .logo--ww img { max-height: 27px; }
+  .logo--uhcc img { max-height: 44px; }
+  .trust__group--badges .logos { grid-template-columns: repeat(2, auto); justify-content: start; }
   .trust__group--partners .logos { grid-template-columns: repeat(3, auto); justify-content: start; }
 }
 @media (min-width: 1100px) {
@@ -242,3 +260,4 @@
   .stat__lbl { font-size: .62rem; letter-spacing: .12em; }
   .stat--word .stat__lbl { display: none; }
 }
+@media (max-width: 339px) { .stat__word { font-size: .92rem; } }   /* 320px: 'operated' has to fit its half of the row without being broken */

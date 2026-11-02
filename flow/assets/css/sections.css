@@ -68,7 +68,8 @@
   width: 24px; height: 24px; border-radius: 50%; background: var(--black); border: 2px solid rgba(255, 255, 255, .55);
   transition: transform .55s var(--e-out);
 }
-.line__name { font: 500 clamp(1.15rem, .6rem + 1.4vw, 1.9rem)/1.1 var(--f-display); letter-spacing: -.035em; text-wrap: balance; }
+/* the second term keeps 'Wellington' / 'Wairarapa' (about 6.3em wide, unbreakable) inside their sixth of the row, 14px clear of the next name, from 900px up */
+.line__name { font: 500 clamp(1.15rem, min(.6rem + 1.4vw, 2.35vw - 2.2px), 1.9rem)/1.1 var(--f-display); letter-spacing: -.035em; text-wrap: balance; }
 .line__go { display: inline-flex; align-items: center; color: var(--red-hot); }
 .line__go .i { transition: transform .5s var(--e-out); }
 .line__stop a:hover .line__dot, .line__stop a:focus-visible .line__dot {
@@ -144,10 +145,11 @@
   .contact__intro { position: sticky; top: calc(var(--hdr) + 24px); }
 }
 
-.quote { display: grid; gap: 18px; }
+/* minmax(0, 1fr): an auto track took the selects' longest option as its minimum and pushed the fields into the panel border on 320-340px phones */
+.quote { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .quote__title { font: 500 clamp(1.25rem, 1rem + .8vw, 1.6rem)/1.2 var(--f-display); letter-spacing: -.025em; }
 .field { display: grid; gap: 8px; min-width: 0; align-content: start; }
-.field-row { display: grid; gap: 18px; }
+.field-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 @media (min-width: 560px) { .field-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .quote label {
   display: flex; justify-content: space-between; gap: 12px; font: 700 .74rem/1.2 var(--f-body); letter-spacing: .14em;
@@ -182,7 +184,7 @@
 }
 @keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
 .form__note {
-  display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 16px;
+  display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; overflow-wrap: anywhere;   /* the email address is longer than the box on a 320px phone */
   background: rgba(255, 255, 255, .05); border: 1px solid var(--line); color: rgba(255, 255, 255, .88); font-size: .9rem; line-height: 1.55;
 }
 .form__note .i { color: var(--red-hot); margin-top: 3px; }

@@ -23,11 +23,11 @@ initHero({
 
 initMenu({ header });
 initBar({ bar: $('#bar'), watch: [$('#contact'), $('#footer')] });
-initServices({ section: $('#services'), hdrH });
+initServices({ section: $('#services'), hdrH, bar: $('#bar') });
 const contact = initContact({ root: $('#contact') });
 initCTAs({ contact, hdrH });
 initFigures();
 initMapPipe({ map: $('#map') });
 initReveal({
-  selectors: ['.sheet__head', '.dim', '.plates', '.blocked__panel', '.about__txt > *', '.map', '.careers__txt > *', '.contact__lead > *', '.contact__form', '.tblock'],
+  selectors: ['.sheet__head', '.dim', '.plates', '.proj', '.blocked__panel', '.about__txt > *', '.map', '.careers__txt > *', '.contact__lead > *', '.contact__form', '.tblock'],
 });

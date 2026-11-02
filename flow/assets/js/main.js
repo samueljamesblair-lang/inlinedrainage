@@ -17,17 +17,19 @@
 
   var mqReduce = win.matchMedia ? win.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var mqFine = win.matchMedia ? win.matchMedia('(hover: hover) and (pointer: fine)') : null;
-  I.reduced = function () { return !!(mqReduce && mqReduce.matches); };
+  var paused = false;   // the visitor's own pause switch (data-motion-toggle): the same state as the system reduced-motion setting
+  var osReduced = function () { return !!(mqReduce && mqReduce.matches); };
+  I.reduced = function () { return paused || osReduced(); };
   I.fine = function () { return !!(mqFine && mqFine.matches); };
   var reduceCbs = [];
   I.onReduce = function (fn) { reduceCbs.push(fn); };
+  var applyReduce = function () {
+    root.classList.toggle('reduce', I.reduced());
+    for (var i = 0; i < reduceCbs.length; i++) reduceCbs[i](I.reduced());
+  };
   if (mqReduce) {
-    var onReduce = function () {
-      root.classList.toggle('reduce', mqReduce.matches);
-      for (var i = 0; i < reduceCbs.length; i++) reduceCbs[i](mqReduce.matches);
-    };
-    if (mqReduce.addEventListener) mqReduce.addEventListener('change', onReduce);
-    else if (mqReduce.addListener) mqReduce.addListener(onReduce);
+    if (mqReduce.addEventListener) mqReduce.addEventListener('change', applyReduce);
+    else if (mqReduce.addListener) mqReduce.addListener(applyReduce);
   }
 
   /* ------------------------------------------------------------ one rAF loop */
@@ -265,6 +267,18 @@
     var hide = s.vw < 900 && !menuOpen && s.dir > 0 && s.y > 240 && !header.contains(doc.activeElement);
     header.classList.toggle('is-hidden', hide);
   });
+
+  /* ------------------------------------------------- pause animation (WCAG 2.2.2) */
+  var motionBtn = $('[data-motion-toggle]');
+  if (motionBtn) {
+    motionBtn.hidden = osReduced();   // shown only when there is something to pause (and only with JS: it does nothing without)
+    motionBtn.addEventListener('click', function () {
+      paused = !paused;
+      motionBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+      applyReduce();
+    });
+    I.onReduce(function () { motionBtn.hidden = osReduced(); });
+  }
 
   /* ------------------------------------------------------------- nav scrollspy */
   var navLinks = $$('.nav a'), spyTargets = navLinks.map(function (a) { return $(a.getAttribute('href')); }), spyIdx = -2;

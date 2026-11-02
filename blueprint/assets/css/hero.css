@@ -6,7 +6,7 @@
   position: relative;
   padding: 18px 0 92px;
 }
-.hero__grid { display: grid; gap: 40px; align-items: center; }
+.hero__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }      /* minmax(0,…): the one column never grows to fit a long line, it wraps */
 .hero__fig { order: -1; position: relative; }
 .hero__copy { position: relative; }
 
@@ -78,6 +78,7 @@
   font: 500 11px/1 var(--ff-mono); letter-spacing: .14em; text-transform: uppercase;
 }
 .replay__t { display: none; }
+html:not(.js) .replay { display: none; }      /* the replay is a script: no script, no button */
 .replay .ico { width: 17px; height: 17px; color: var(--red); transition: transform .5s var(--ease-out); }
 .replay:hover { border-color: rgba(255, 255, 255, .6); }
 .replay:hover .ico { transform: rotate(-180deg); }
@@ -111,6 +112,13 @@ html.js:not(.ready) .ring__in-fill, html.js:not(.ready) .ring__port { animation:
   .js .hero:not(.is-locked) .ring__in-fill, .js .hero:not(.is-locked) .ring__port { opacity: 1; }
 }
 
+@media (max-width: 959px) {            /* one column: the lines are sized to fit on one row, so this only matters when a visitor's own letter / word spacing makes one wider than the screen */
+  .line { white-space: normal; overflow-wrap: anywhere; }
+}
+@media (max-width: 339px) {            /* 320px phones: 46px made "in Wellington" 7px wider than the column */
+  .hero__title { font-size: 44px; }
+}
+
 @media (min-width: 560px) {
   .hero { padding-top: 26px; }
   .ringbox { width: min(100%, 320px); }
@@ -120,7 +128,7 @@ html.js:not(.ready) .ring__in-fill, html.js:not(.ready) .ring__port { animation:
   .hero__quote { grid-column: 1 / -1; justify-self: start; min-width: 260px; }
   .tag__x { display: inline; }
 }
-@media (min-width: 720px) {          /* three across only once each call tile has room for its number (~220px) */
+@media (min-width: 800px) {          /* three across only once each call tile has room for its icon and number (~220px: the icon was a sliver at 720-790px) */
   .hero__cta { grid-template-columns: auto 1fr 1fr; }
   .hero__quote { grid-column: auto; justify-self: stretch; min-width: 0; }
 }
@@ -189,8 +197,10 @@ html.js:not(.ready) .ring__in-fill, html.js:not(.ready) .ring__port { animation:
 .cell--own .stat__l { display: none; }
 .cell--logo { justify-content: center; }
 .logo { width: auto; height: auto; }
-.logo--impac { height: 58px; }
-.logo--ccnz { height: 44px; max-width: 100%; }
+/* badge + body logos: height follows width, never both fixed. The cell can be narrower than the logo's natural width,
+   and a fixed height would squash it sideways (the box keeps its aspect ratio, so the picture does too) */
+.logo--impac { max-height: 58px; max-width: 100%; }
+.logo--ccnz { max-height: 44px; max-width: 100%; }
 .cell--partners { grid-column: 1 / -1; flex-wrap: wrap; justify-content: center; padding-top: 34px; }
 .cell--partners .cell__k { right: 14px; }
 .partners { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 34px; width: 100%; }
@@ -198,23 +208,31 @@ html.js:not(.ready) .ring__in-fill, html.js:not(.ready) .ring__port { animation:
 .logo--wcc { height: 44px; }
 .logo--ww { height: 40px; }
 .logo--uhcc { height: 52px; }
+@media (max-width: 359px) {            /* below the 360 design floor the two cells are ~127px each: equal columns, a smaller headline and tighter padding keep OPERATED inside its cell (and the logos a fair share of the row), with or without a visitor's text spacing */
+  .trust__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cell { padding-inline: 14px 10px; }
+  .stat__t { font-size: 24px; overflow-wrap: anywhere; }
+}
 
-@media (min-width: 720px) {
+@media (min-width: 720px) {          /* two rows (stats, then logos): four across leaves the logos ~100px each below 1100px */
   .trust__grid { grid-template-columns: repeat(12, 1fr); }
-  .cell--stat:nth-child(1) { grid-column: span 3; }
-  .cell--own { grid-column: span 5; }
+  .cell--stat:nth-child(1) { grid-column: span 4; }
+  .cell--own { grid-column: span 8; }
   .cell--own .stat__l { display: block; max-width: 22em; }
-  .cell--logo { grid-column: span 2; }
+  .cell--logo { grid-column: span 6; }
   .cell--partners { grid-column: 1 / -1; min-height: 92px; justify-content: flex-start; padding-left: 18px; }
   .partners { justify-content: space-around; gap: 16px 40px; }
   .cell { min-height: 112px; }
-  .logo--impac { height: 64px; }
-  .logo--ccnz { height: 48px; }
+  .logo--impac { max-height: 64px; }
+  .logo--ccnz { max-height: 48px; }
   .logo--wcc { height: 50px; }
   .logo--ww { height: 44px; }
   .logo--uhcc { height: 58px; }
 }
 @media (min-width: 1100px) {
+  .cell--stat:nth-child(1) { grid-column: span 3; }
+  .cell--own { grid-column: span 5; }
+  .cell--logo { grid-column: span 2; }
   .cell--partners { min-height: 96px; padding-left: 190px; }
   .cell--partners .cell__k { left: 14px; right: auto; top: 50%; transform: translateY(-50%); width: 150px; line-height: 1.6; }
   .stat__n { font-size: 68px; }

@@ -3,7 +3,10 @@
    Scroll position drives (a) a scrubbed photo crossfade with a slow push-in and
    (b) the lit pipe + particles; the card text swaps on a time-based transition.
    The pinned layout is only switched on from JS, so without JS, with reduced motion
-   or on very short screens the same markup is a clean vertical stack of cards. */
+   or on very short screens the same markup is a clean vertical stack of cards.
+   In the pinned layout the inactive cards are faded, not hidden: all seven services stay in the accessibility
+   tree (their links just leave the tab order), a polite status line names the service on screen, and keyboard
+   focus pulls the story to the focused service instead of letting the browser scroll it past. */
 (function () {
   'use strict';
   var win = window, doc = document;
@@ -21,10 +24,15 @@
   var medias = stops.map(function (s) { return s.querySelector('.stop__media'); });
   var imgs = medias.map(function (m) { return m.querySelector('img'); });
   var titles = stops.map(function (s) { return s.querySelector('.stop__title').textContent.trim(); });
+  var links = stops.map(function (s) { return Array.prototype.slice.call(s.querySelectorAll('a')); });
   var countEl = root.querySelector('.story__count .roll');
-  var mq = win.matchMedia ? win.matchMedia('(min-height: 500px)') : { matches: true };
+  /* pinned only where the stage has room for its parts: from 900px wide the rail is vertical with a name beside each node and
+     needs about 275px of height (a 44px node pitch), reached from a 680px-tall window; on a phone the card has to clear the
+     horizontal rail above it, which holds from 600px. Shorter windows get the stack of cards instead. */
+  var mq = win.matchMedia ? win.matchMedia('(min-width: 900px) and (min-height: 680px), (max-width: 899px) and (min-height: 600px)') : { matches: true };
 
   var pinned = false, idx = -1, pe = 0, dist = 1, rail = null, started = false, inView = false;
+  var status = null, statusTimer = 0;
   var zooms = stops.map(function () { return 1; });
   var pox = 0, poy = 0;   // smoothed pointer offsets (px) applied to the photo layers
 
@@ -44,6 +52,7 @@
       var li = el('li', 'rail__item'), b = el('button', 'rail__node');
       b.type = 'button';
       b.setAttribute('aria-label', 'Show service ' + (i + 1) + ' of ' + n + ': ' + t);
+      b.setAttribute('aria-controls', stops[i].id);
       var dot = el('span', 'rail__dot'), num = el('span', 'rail__num'), lab = el('span', 'rail__label');
       num.textContent = String(i + 1); num.setAttribute('aria-hidden', 'true');
       lab.textContent = t;
@@ -66,7 +75,7 @@
     this.canvas.width = Math.round(w * dpr); this.canvas.height = Math.round(h * dpr);
     this.ctx = this.canvas.getContext('2d');
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var horizontal = w > h * 1.4, pts = [], steps = 14, i, t;
+    var horizontal = win.innerWidth < 900, pts = [], steps = 14, i, t;   // same breakpoint as the CSS: it swaps to the labelless phone rail below 900px
     this.horizontal = horizontal;
     if (horizontal) {
       var amp = Math.min(7, h * 0.12);
@@ -198,13 +207,24 @@
   }
 
   function setActive(i) {
+    var prev = idx, held = doc.activeElement;
     idx = i;
     stops.forEach(function (s, k) {
       s.classList.toggle('is-active', k === i);
       s.classList.toggle('is-past', k < i);
+      links[k].forEach(function (a) { if (k === i) a.removeAttribute('tabindex'); else a.setAttribute('tabindex', '-1'); });
     });
+    /* a faded card is no longer a place for focus: if it was inside the card that just left, follow the story */
+    if (prev >= 0 && prev !== i && held && stops[prev].contains(held)) {
+      var next = stops[i].querySelector('.btn');
+      if (next) next.focus({ preventScroll: true });
+    }
     if (rail) rail.setActive(i);
     if (countEl) I.roll.set(countEl, i + 1);
+    if (status && prev >= 0) {   // say the service that settled, not every one scrolled past
+      win.clearTimeout(statusTimer);
+      statusTimer = win.setTimeout(function () { status.textContent = 'Service ' + (i + 1) + ' of ' + n + ': ' + titles[i]; }, 500);
+    }
   }
 
   function update() {
@@ -229,9 +249,9 @@
     if (rail) rail.layout();
   }
 
-  function goTo(i) {
+  function goTo(i, instant) {
     var absTop = track.getBoundingClientRect().top + (win.pageYOffset || 0);
-    win.scrollTo({ top: absTop + (i / (n - 1)) * dist + 1, behavior: I.reduced() ? 'auto' : 'smooth' });
+    win.scrollTo({ top: absTop + (i / (n - 1)) * dist + 1, behavior: instant ? 'instant' : I.reduced() ? 'auto' : 'smooth' });
   }
 
   /* ------------------------------------------------------------- mode switching */
@@ -240,6 +260,9 @@
     if (pinned) return;
     pinned = true;
     root.classList.add('is-pinned');
+    medias.forEach(function (m) { m.setAttribute('aria-hidden', 'true'); });   // scrubbed backdrop here: each card carries its own text
+    status = el('p', 'sr-only'); status.setAttribute('role', 'status');
+    stage.appendChild(status);
     rail = new Rail();
     measure();
     idx = -1;
@@ -259,7 +282,9 @@
     I.loop.stop(railTask);
     root.classList.remove('is-pinned', 'is-started');
     if (rail) { rail.destroy(); rail = null; }
-    medias.forEach(function (m) { m.style.opacity = ''; m.style.visibility = ''; m.__on = undefined; });
+    if (status) { win.clearTimeout(statusTimer); if (status.parentNode) status.parentNode.removeChild(status); status = null; }
+    links.forEach(function (ls) { ls.forEach(function (a) { a.removeAttribute('tabindex'); }); });
+    medias.forEach(function (m) { m.style.opacity = ''; m.style.visibility = ''; m.removeAttribute('aria-hidden'); m.__on = undefined; });
     imgs.forEach(function (im) { im.style.transform = ''; });
     stops.forEach(function (s) { s.classList.remove('is-active', 'is-past'); });
     root.style.removeProperty('--rail-top');
@@ -268,6 +293,17 @@
   function evaluate() {
     if (I.reduced() || !mq.matches) disable(); else enable();
   }
+
+  /* focus inside the stage. If the story is on another service, has not reached the stage yet, or has run on under the next
+     section (which curtains over it), bring it to the focused service so the control and its focus ring are on screen; done
+     before the browser's own focus-scroll, which would otherwise push the story past it or leave focus out of sight. */
+  stage.addEventListener('focusin', function (e) {
+    if (!pinned) return;
+    var s = e.target.closest ? e.target.closest('.stop') : null;
+    var k = s ? stops.indexOf(s) : Math.max(idx, 0);          // rail buttons: wherever the story already is
+    var top = track.getBoundingClientRect().top;
+    if ((s && k !== idx) || top > 1 || -top > dist + 1) goTo(k, true);
+  });
 
   I.onScroll(update);
   I.onResize(function () { if (pinned) { measure(); update(); } });

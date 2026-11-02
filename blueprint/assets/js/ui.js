@@ -16,12 +16,10 @@ export function initMenu({ header }) {
     window.clearTimeout(closeTimer);
     nav.hidden = false;
     btn.setAttribute('aria-expanded', 'true');
-    btn.setAttribute('aria-label', 'Close menu');
     window.requestAnimationFrame(() => nav.classList.add('is-open'));
   }
   function close(returnFocus) {
     btn.setAttribute('aria-expanded', 'false');
-    btn.setAttribute('aria-label', 'Open menu');
     nav.classList.remove('is-open');
     closeTimer = window.setTimeout(() => { nav.hidden = true; }, reduce.matches ? 0 : 260);
     if (returnFocus) btn.focus();
@@ -89,12 +87,14 @@ export function initCTAs({ contact, hdrH }) {
     e.preventDefault();
     contact.preselect({ service: a.dataset.service || '', area: a.dataset.area || '' });
     if (window.location.hash !== '#contact') history.replaceState(null, '', '#contact');
-    const top = formWrap.getBoundingClientRect().top + window.scrollY - hdrH() - 16;
+    // where the form will sit once it has settled: its reveal (.rv, a translateY that is still easing in) is not part of that, so take it out
+    const lift = new DOMMatrixReadOnly(window.getComputedStyle(formWrap).transform).m42;
+    const top = formWrap.getBoundingClientRect().top - lift + window.scrollY - hdrH() - 16;
     window.scrollTo({ top, behavior: reduce.matches ? 'auto' : 'smooth' });
-    // on a desktop pointer put the caret in the first field; on touch leave the keyboard down
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      window.setTimeout(() => contact.focusFirst(), reduce.matches ? 0 : 650);
-    }
+    // move focus along with the scroll, so Tab / a screen reader carries on from the form and not from the CTA thousands of pixels above it:
+    // a keyboard press or a desktop pointer puts the caret in the first field; touch focuses the form itself (a field would raise the keyboard)
+    const typing = e.detail === 0 || window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    window.setTimeout(() => (typing ? contact.focusFirst() : contact.focusForm()), reduce.matches ? 0 : 650);
   });
 }
 

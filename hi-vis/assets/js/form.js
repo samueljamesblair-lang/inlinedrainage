@@ -100,7 +100,10 @@
     return errs;
   }
 
+  var shown = [];                           /* errors on screen: { key, msg, li } */
+
   function clearErrors() {
+    shown = [];
     errBox.hidden = true;
     while (errList.firstChild) { errList.removeChild(errList.firstChild); }
     nameErr.hidden = true; nameErr.textContent = '';
@@ -108,44 +111,52 @@
     [f.name, f.phone, f.email].forEach(function (el) { el.removeAttribute('aria-invalid'); });
   }
 
+  function setInvalid(el, on) {
+    if (on) { el.setAttribute('aria-invalid', 'true'); } else { el.removeAttribute('aria-invalid'); }
+  }
+
+  /* the summary box, the inline messages and every aria-invalid flag are drawn from `shown` */
+  function paintErrors() {
+    var has = function (k) { return shown.some(function (er) { return er.key === k; }); };
+    var nameMsgs = shown.filter(function (er) { return er.key === 'name'; }).map(function (er) { return er.msg; });
+    var contactMsgs = shown.filter(function (er) { return er.key !== 'name'; }).map(function (er) { return er.msg; });
+    nameErr.textContent = nameMsgs.join(' ');
+    nameErr.hidden = !nameMsgs.length;
+    contactErr.textContent = contactMsgs.join(' ');
+    contactErr.hidden = !contactMsgs.length;
+    setInvalid(f.name, has('name'));
+    setInvalid(f.phone, has('contact') || has('phone'));
+    setInvalid(f.email, has('contact') || has('email'));
+    errBox.hidden = !shown.length;
+  }
+
   function showErrors(errs) {
     clearErrors();
-    var contactMsgs = [];
     errs.forEach(function (er) {
       var li = document.createElement('li');
       li.textContent = er.msg;
       errList.appendChild(li);
-      er.el.setAttribute('aria-invalid', 'true');
-      if (er.key === 'name') {
-        nameErr.textContent = er.msg;
-        nameErr.hidden = false;
-      } else {
-        contactMsgs.push(er.msg);
-        if (er.key === 'contact') { f.email.setAttribute('aria-invalid', 'true'); }
-      }
+      shown.push({ key: er.key, msg: er.msg, li: li });
     });
-    if (contactMsgs.length) {
-      contactErr.textContent = contactMsgs.join(' ');
-      contactErr.hidden = false;
-    }
-    errBox.hidden = false;
+    paintErrors();
     errs[0].el.focus();
   }
 
-  /* editing a field clears its error state */
-  [f.name, f.phone, f.email].forEach(function (el) {
-    el.addEventListener('input', function () {
-      el.removeAttribute('aria-invalid');
-      if (el === f.name) { nameErr.hidden = true; }
-      if (el === f.phone || el === f.email) {
-        if (f.phone.getAttribute('aria-invalid') !== 'true' && f.email.getAttribute('aria-invalid') !== 'true') {
-          contactErr.hidden = true;
-        }
-      }
-      var anyInvalid = form.querySelector('[aria-invalid="true"]');
-      if (!anyInvalid) { errBox.hidden = true; }
+  /* typing drops the messages the visitor has just resolved (and their summary lines). It never
+     adds one, so nothing flashes red while a number is half typed; submit does the full check. */
+  function pruneErrors() {
+    if (!shown.length) return;
+    var live = validate(readValues()).map(function (er) { return er.key; });
+    var kept = shown.filter(function (er) {
+      if (live.indexOf(er.key) !== -1) return true;
+      errList.removeChild(er.li);
+      return false;
     });
-  });
+    if (kept.length === shown.length) return;
+    shown = kept;
+    paintErrors();
+  }
+  [f.name, f.phone, f.email].forEach(function (el) { el.addEventListener('input', pruneErrors); });
 
   /* ------------------------------------------------------------------
      compose + mailto
@@ -322,9 +333,10 @@
     target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     if (window.history && window.history.replaceState) { window.history.replaceState(null, '', '#contact'); }
 
-    /* keyboard-triggered click (detail 0): move focus to the control that was set */
+    /* keyboard-triggered click (detail 0): move focus to the control that was set. The generic
+       quote buttons use the contact heading, so the next Tab carries on from there, not from the button */
     if (e.detail === 0) {
-      var el = svc ? f.service : (area ? f.area : null);
+      var el = svc ? f.service : (area ? f.area : byId('contact-title'));
       if (el) { el.focus({ preventScroll: true }); }
     }
   });

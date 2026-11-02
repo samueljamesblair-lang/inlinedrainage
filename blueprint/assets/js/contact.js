@@ -10,6 +10,8 @@ const SERVICES = [
   'Watermain Connections', 'Drain Clearing', 'Digger & Truck Hire',
 ];
 const enc = encodeURIComponent;
+const MAX_URL = 1900;                                       // the longest mailto: link we hand over; some browsers and mail apps drop longer ones
+const CUT = '\u2026 [message shortened]';                    // marks where a long message was cut, so the person reading the draft knows
 
 /** the one place that leaves the page; kept as a tiny seam so tests can observe the composed link */
 export const hooks = {
@@ -42,6 +44,7 @@ export function initContact({ root }) {
   const confirmMsg = root.querySelector('#confirmMsg');
   const copyBtn = root.querySelector('#copyBtn');
   const editBtn = root.querySelector('#editBtn');
+  const confirmShort = root.querySelector('#confirmShort');
   const copyStatus = root.querySelector('#copyStatus');
   const formStatus = root.querySelector('#formStatus');
 
@@ -74,20 +77,26 @@ export function initContact({ root }) {
     };
   }
 
+  // one rule per field: its message, or '' when the value is fine (phone and email are optional, but must look right if given).
+  // Used by submit and by the live check further down, so a message goes away under the same rule that raised it.
+  const RULES = {
+    name: (d) => (d.name.length < 2 ? 'Please enter your name.' : ''),
+    phone: (d) => (d.phone && d.phone.replace(/\D/g, '').length < 7 ? 'That phone number looks too short.' : ''),
+    email: (d) => (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email) ? 'That email address does not look right.' : ''),
+  };
+
   function validate(d) {
     clearErrors();
     let first = null;
     const bad = (key, input, text) => { setError(key, input, text); first = first || input; };
+    const check = (key) => { const text = RULES[key](d); if (text) bad(key, f[key], text); };
 
-    if (d.name.length < 2) bad('name', f.name, 'Please enter your name.');
-    const digits = d.phone.replace(/\D/g, '');
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email);
-
+    check('name');
     if (!d.phone && !d.email) {
       bad('contact', f.phone, 'Please add a phone number or an email address so we can get back to you.');
     } else {
-      if (d.phone && digits.length < 7) bad('phone', f.phone, 'That phone number looks too short.');
-      if (d.email && !emailOk) bad('email', f.email, 'That email address does not look right.');
+      check('phone');
+      check('email');
     }
     if (first) first.focus();
     return !first;
@@ -119,17 +128,30 @@ export function initContact({ root }) {
     ].join('\r\n');
 
     const NL = enc('\r\n');
-    const bodyEncoded = [
+    const head = `mailto:${TO}?subject=${enc(subject)}&body=` + [
       enc('Quote request from the Inline Drainage website'),
       '',
       ...rows.map(([k, v]) => enc(k + ': ') + enc(v)),
       '',
       enc('Message:'),
-      enc(msg),
-    ].join(NL);
+    ].join(NL) + NL;
+    const build = (m) => head + enc(m);
 
-    const url = `mailto:${TO}?subject=${enc(subject)}&body=${bodyEncoded}`;
-    return { subject, plain, url };
+    // The link is capped at MAX_URL and only the message gives way (a multi-byte character costs up to 12 characters once encoded).
+    // Cut on whole characters, never half an emoji, at the longest length that still fits; `plain` (shown, and copied) stays complete.
+    let url = build(msg);
+    const shortened = url.length > MAX_URL;
+    if (shortened) {
+      const chars = Array.from(msg);
+      let lo = 0;
+      let hi = chars.length;
+      while (lo < hi) {                                      // the link only grows with the prefix, so a binary search finds the longest fit
+        const mid = (lo + hi + 1) >> 1;
+        if (build(chars.slice(0, mid).join('') + CUT).length <= MAX_URL) lo = mid; else hi = mid - 1;
+      }
+      url = build(chars.slice(0, lo).join('').trimEnd() + CUT);
+    }
+    return { subject, plain, url, shortened };
   }
 
   /* ---------- submit ---------- */
@@ -141,22 +163,30 @@ export function initContact({ root }) {
 
     confirmMsg.textContent = `To: ${TO}\nSubject: ${mail.subject}\n\n${mail.plain.replace(/\r\n/g, '\n')}`;
     copyStatus.textContent = '';
+    confirmShort.hidden = !mail.shortened;
     form.hidden = true;
     confirm.hidden = false;
     confirm.focus({ preventScroll: true });
-    confirm.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+    confirm.scrollIntoView({ block: 'start', behavior: 'auto' });      // 'start' honours scroll-padding-top; 'nearest' does nothing for a panel taller than the screen
     if (formStatus) formStatus.textContent = 'Message composed. Your email app should open.';
 
     hooks.navigate(mail.url);
   });
 
+  // a message (with its red border and aria-invalid) goes away as the visitor fixes the field, so nothing stale stays on screen or in the
+  // accessible description; while the value is still wrong it stays until the next submit or the next fix
+  function dismiss(key) {
+    const input = key === 'contact' ? f.phone : f[key];
+    errEls[key].textContent = '';
+    errEls[key].hidden = true;
+    input.removeAttribute('aria-invalid');
+    input.closest('.field').classList.remove('is-bad');
+  }
   ['input', 'change'].forEach((evt) => form.addEventListener(evt, (e) => {
-    const t = e.target;
-    if (t && t.hasAttribute && t.hasAttribute('aria-invalid')) {
-      t.removeAttribute('aria-invalid');
-      t.closest('.field') && t.closest('.field').classList.remove('is-bad');
-    }
-    if (t === f.phone || t === f.email) { errEls.contact.hidden = true; errEls.contact.textContent = ''; }
+    const key = ['name', 'phone', 'email'].find((k) => e.target === f[k]);
+    if (!key) return;
+    if (key !== 'name' && !errEls.contact.hidden) dismiss('contact');          // typing in either answers "add a phone or an email"
+    if (!errEls[key].hidden && !RULES[key](read())) dismiss(key);
   }));
 
   /* ---------- confirmation actions ---------- */
@@ -195,7 +225,7 @@ export function initContact({ root }) {
     confirm.hidden = true;
     form.hidden = false;
     f.name.focus({ preventScroll: true });
-    form.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+    form.scrollIntoView({ block: 'start', behavior: 'auto' });         // the first field sits just below the form's top edge
   });
 
   /* ---------- preselect API (used by the data-service / data-area CTAs) ---------- */
@@ -214,5 +244,9 @@ export function initContact({ root }) {
     window.setTimeout(() => field.classList.remove('is-pre'), 1800);
   }
 
-  return { preselect, focusFirst: () => f.name.focus({ preventScroll: true }) };
+  return {
+    preselect,
+    focusFirst: () => f.name.focus({ preventScroll: true }),
+    focusForm: () => form.focus({ preventScroll: true }),       // for touch: moves focus to the form without raising the on-screen keyboard
+  };
 }

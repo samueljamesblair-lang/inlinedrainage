@@ -87,6 +87,7 @@ a { color: inherit; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 [hidden] { display: none !important; }
+html:not(.js) .hdr__menu { display: none; }      /* no script, no menu to open: the footer's sheet index is the way around */
 :focus-visible { outline: 2px solid var(--focus, #fff); outline-offset: 3px; }
 ::selection { background: var(--red); color: var(--ink); }
 
@@ -207,10 +208,14 @@ button { cursor: pointer; }
     transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease-out);
   }
   .hdr__nav a:hover::after, .hdr__nav a:focus-visible::after { transform: scaleX(1); }
-  .hdr__call-t { display: grid; text-align: left; line-height: 1.1; }
+  .hdr__call-t { text-align: left; line-height: 1.1; }
   .hdr__call-t span { font: 500 10px var(--ff-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--t4); }
   .hdr__call-t b { font: 700 15px var(--ff-mono); letter-spacing: .02em; color: var(--t1); }
-  .hdr__call { padding: 0 16px; min-height: 48px; }
+  .hdr__call { min-height: 48px; }
+}
+@media (min-width: 1180px) {           /* six links and the number only fit side by side from here; from 1040 to 1179 the call button is the phone icon alone (its accessible name still carries the number) */
+  .hdr__call-t { display: grid; }
+  .hdr__call { padding: 0 16px; }
 }
 
 /* mobile menu sheet */
@@ -218,6 +223,7 @@ button { cursor: pointer; }
   position: absolute; left: 0; right: 0; top: 100%;
   background: var(--ink); border-bottom: 1px solid var(--hair);
   padding: 8px var(--wrap-r) 22px var(--wrap-l);
+  max-height: calc(100vh - var(--hdr-h)); max-height: calc(100dvh - var(--hdr-h)); overflow-y: auto; overscroll-behavior: contain;      /* a short (landscape) window scrolls the menu instead of cutting it off */
   opacity: 0; transform: translateY(-8px); transition: opacity .22s, transform .3s var(--ease-out);
 }
 .mnav.is-open { opacity: 1; transform: none; }
@@ -233,6 +239,9 @@ button { cursor: pointer; }
   border: 1px solid var(--hair); text-decoration: none; color: var(--t1); font: 700 16px var(--ff-mono);
 }
 .mnav__calls .ico { color: var(--red); }
+@media (max-width: 339px) {            /* 320px: "Patrick 027 2940 952" at 16px is wider than the row, so it split over two lines */
+  .mnav__calls a { padding: 0 12px; gap: 10px; font-size: 15px; white-space: nowrap; }
+}
 
 /* ---------- buttons ---------- */
 .btn {
@@ -272,7 +281,7 @@ button { cursor: pointer; }
 /* call tiles */
 .call {
   position: relative; isolation: isolate; overflow: hidden;
-  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 12px; align-items: center;
+  display: grid; grid-template-columns: 22px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 12px; align-items: center;
   min-height: 60px; padding: 8px 20px 8px 16px;
   border: 1px solid var(--hair); color: var(--t1); text-decoration: none; background: rgba(11, 11, 12, .6);
 }
@@ -284,7 +293,7 @@ button { cursor: pointer; }
 .call:hover { border-color: rgba(255, 255, 255, .55); }
 .call .ico { grid-row: 1 / 3; width: 22px; height: 22px; color: var(--red); }
 .call__who { font: 500 10.5px/1.2 var(--ff-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--t3); }
-.call__num { font: 700 21px/1.15 var(--ff-mono); letter-spacing: -.01em; color: var(--t1); white-space: nowrap; }
+.call__num { font: 700 21px/1.15 var(--ff-mono); letter-spacing: -.01em; color: var(--t1); overflow-wrap: anywhere; }      /* tiles are sized for the number on one row; user text spacing wraps it rather than clipping it */
 
 /* ---------- drawing furniture ---------- */
 .tag {
@@ -311,7 +320,7 @@ button { cursor: pointer; }
 .h2 {
   font: 900 clamp(44px, 12vw, 108px)/.9 var(--ff-head); font-stretch: 62%;
   letter-spacing: -.005em; text-transform: uppercase; color: var(--t1);
-  text-wrap: balance;
+  text-wrap: balance; overflow-wrap: anywhere;      /* a word wider than the screen (only with the visitor's own text spacing) breaks instead of running off the page */
 }
 .h2 em { font-style: normal; color: var(--red); }
 .lead { font-size: clamp(19px, 2.3vw, 24px); line-height: 1.45; color: var(--t1); font-weight: 400; }
@@ -378,6 +387,7 @@ button { cursor: pointer; }
 @media (max-width: 759px) {
   .bar { display: grid; }
   .page { padding-bottom: 0; }
+  html { scroll-padding-bottom: calc(var(--bar-h) + 16px + env(safe-area-inset-bottom)); }      /* Tab / scrollIntoView stop above the fixed bar, not under it */
 }
 
 /* ---------- reveal helpers (only exist once JS is running) ---------- */
@@ -386,5 +396,5 @@ button { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   .js .rv { opacity: 1; transform: none; transition: none; }
-  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; transition-delay: 0ms !important; }
 }

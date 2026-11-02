@@ -75,7 +75,10 @@ html:not(.js) .node::before {
 .plate.is-open .plate__ico::after { transform: rotate(0deg); background: var(--red); }
 
 .js .plate:not(.is-open) .plate__panel { display: none; }
-.plate__body { display: grid; gap: 22px; padding: 6px 0 36px; }
+html:not(.js) .plate__ico { display: none; }                              /* no script: nothing opens or closes, every plate is already open */
+html:not(.js) .plate__name { color: var(--t1); }
+html:not(.js) .plate__no { color: var(--red); }
+.plate__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; padding: 6px 0 36px; }
 .plate__img { position: relative; aspect-ratio: 16 / 11; overflow: hidden; background: var(--ink-2); outline: 1px solid var(--hair); outline-offset: 6px; }
 .plate__img::after { content: ""; position: absolute; inset: 0; z-index: 2; background: var(--ink); transform: scaleX(0); transform-origin: right; }
 .plate__img::before {
@@ -99,6 +102,7 @@ html:not(.js) .node::before {
 .pos-4 { object-position: 50% 36%; }
 .pos-5 { object-position: 50% 0%; }
 .pos-7 { object-position: 50% 50%; }
+/* these two are zoomed: the box is at most 493px wide, so the picture is drawn ~740px / ~890px wide, and their sizes="" in index.html say so (else the browser fetches a file sized for the box and stretches it) */
 .plate__img img.pos-1 { width: 150%; height: 150%; max-width: none; margin: -9% 0 0 0; }          /* excavator + crew */
 .plate__img img.pos-6 { width: 180%; height: 180%; max-width: none; margin: -24% 0 0 -80%; }      /* the service truck */
 .plate__txt { display: grid; align-content: start; justify-items: start; gap: 24px; }
@@ -119,7 +123,7 @@ html:not(.js) .node::before {
 .blocked { --bk-pt: clamp(8px, 2vw, 24px); position: relative; padding: var(--bk-pt) 0 clamp(24px, 4vw, 48px); }
 .blocked > .node { top: calc(var(--bk-pt) + 48px); }
 .blocked__panel {
-  position: relative; z-index: 2; display: grid; gap: 22px; align-items: end;
+  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; align-items: end;
   padding: clamp(22px, 4vw, 56px); background: var(--red); color: var(--ink);
 }
 .blocked__stub { position: absolute; right: 100%; top: 46px; width: calc(var(--gut) - var(--node-r) + 6px); height: 5px; background: var(--red); }
@@ -131,6 +135,7 @@ html:not(.js) .node::before {
 .blocked__tag { position: relative; font: 700 11px/1 var(--ff-mono); letter-spacing: .18em; color: var(--ink); }
 .blocked__title {
   position: relative; max-width: 4.2em; font: 900 clamp(64px, 20vw, 190px)/.8 var(--ff-head); font-stretch: 62%; text-transform: uppercase; letter-spacing: -.01em; color: var(--ink);
+  overflow-wrap: anywhere;
 }
 .blocked__text { position: relative; max-width: 28em; font-size: clamp(18px, 2.1vw, 22px); line-height: 1.45; color: var(--ink); font-weight: 500; }
 .blocked__act { position: relative; display: grid; gap: 10px; }
@@ -149,17 +154,49 @@ html:not(.js) .node::before {
   .blocked__act { align-self: start; grid-template-columns: 1fr 1fr; }
   .blocked__act .btn--line { grid-column: 1 / -1; }
 }
-@media (min-width: 900px) and (max-width: 1099px) {          /* the call buttons are only ~150-190px wide here: keep the phone number inside */
-  .blocked .btn--stack { padding-inline: 18px; }
+@media (min-width: 900px) and (max-width: 1179px) {          /* side by side the call buttons are only ~150-200px wide, too tight for the phone number (it clipped under a visitor's own text spacing): stack them */
+  .blocked__act { grid-template-columns: minmax(0, 1fr); }
 }
 @media (min-width: 1180px) {
   .blocked__panel { padding: 56px 64px; }
 }
 
 /* ==========================================================================
+   Projects: two job plates, the client's own project photos (one tall, one panorama)
+   ========================================================================== */
+.projects .dim { margin-bottom: clamp(22px, 3vw, 34px); }
+.projects .proj + .dim { margin-top: clamp(56px, 8vw, 104px); }
+.proj { display: grid; grid-template-columns: minmax(0, 1fr); gap: 34px; }
+.proj__h {
+  font: 900 clamp(32px, 8.4vw, 76px)/.94 var(--ff-head); font-stretch: 62%; text-transform: uppercase; letter-spacing: -.003em;
+  color: var(--t1); text-wrap: balance; overflow-wrap: anywhere;
+}
+.proj__fig { width: 100%; max-width: 440px; }          /* Rimu Street is a 750px-wide file: never drawn wider than 440px */
+.proj--wide .proj__fig { max-width: none; }            /* the 2500px panorama is drawn at the container's width, 1240px at most */
+.fig__frame--pano { aspect-ratio: 2500 / 910; }
+.proj__act { margin: 0; }
+
+@media (max-width: 719px) {            /* phones: the panorama runs edge to edge (the pipe lane and gutter are taken back), so a 2.75:1 night photo reads as a panorama and not a postage stamp */
+  .proj--wide .proj__fig { width: auto; margin-inline: calc(var(--wrap-l) * -1) calc(var(--wrap-r) * -1); }
+  .proj--wide .fig__frame { outline: 0; box-shadow: 0 -1px 0 var(--hair), 0 1px 0 var(--hair); }
+  .proj--wide .fig__frame::before, .proj--wide .fig__frame::after { display: none; }
+  .proj--wide .fig figcaption { padding-inline: var(--wrap-l) var(--wrap-r); }
+}
+@media (min-width: 720px) {            /* the tall photo sits beside its title and button, the way a service plate does */
+  .proj--tall { grid-template-columns: minmax(0, min(440px, 45%)) minmax(0, 1fr); grid-template-rows: 1fr 1fr; column-gap: 40px; row-gap: 0; }
+  .proj--tall .proj__fig { grid-column: 1; grid-row: 1 / 3; max-width: none; }
+  .proj--tall .proj__h { grid-column: 2; grid-row: 1; align-self: end; padding-bottom: 14px; font-size: clamp(34px, 6.2vw, 62px); }
+  .proj--tall .proj__act { grid-column: 2; grid-row: 2; align-self: start; padding-top: 14px; }
+}
+@media (min-width: 1000px) {
+  .proj--tall { column-gap: 88px; }
+  .proj--tall .proj__h { font-size: clamp(56px, 6.4vw, 76px); }
+}
+
+/* ==========================================================================
    About
    ========================================================================== */
-.about__grid { display: grid; gap: 40px; }
+.about__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
 .about__tag { grid-column: 1 / -1; margin-bottom: 4px; }
 .about__fig { max-width: 440px; width: 100%; }
 .fig__frame--tall { aspect-ratio: 3 / 4; }
@@ -177,7 +214,7 @@ html:not(.js) .node::before {
 .about__txt { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 24px; }
 .about__p { font-size: clamp(18px, 2.1vw, 22px); color: var(--t2); max-width: 30em; }
 .about .h2 { font-size: clamp(44px, 11.4vw, 86px); }
-.nb { white-space: nowrap; }
+.nb { display: inline-block; max-width: 100%; }      /* atomic like nowrap while "Future-proof." fits; wraps at its hyphen only when a visitor's text spacing makes it wider than the column */
 .figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair); margin-top: 10px; }
 .figures__i { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; padding: 18px 10px 18px 0; border-bottom: 1px solid var(--hair); }
 .figures__i + .figures__i { padding-left: 14px; border-left: 1px solid var(--hair); }
@@ -196,16 +233,24 @@ html:not(.js) .node::before {
 .doc__t { grid-area: t; font: 700 17px/1.2 var(--ff-body); }
 .doc__m { grid-area: m; font: 500 11px/1.3 var(--ff-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--t3); }
 
+@media (min-width: 720px) {            /* tablets: photo and text side by side (stacked, the 440px photo left a ~215px hole beside it and pushed the headline a full photo down) */
+  .about__grid { grid-template-columns: minmax(0, min(40%, 440px)) minmax(0, 1fr); column-gap: 40px; row-gap: 40px; align-items: start; }
+}
 @media (min-width: 1000px) {
   .about .h2 { font-size: clamp(64px, 7.7vw, 108px); }
   .about__grid { grid-template-columns: minmax(0, 440px) minmax(0, 1fr); column-gap: 88px; row-gap: 48px; align-items: start; }
+}
+@media (min-width: 1180px) {           /* two policy cards side by side need ~250px each: the column is only ~420px wide below this, where they wrapped to three lines and squeezed the icon */
   .docs { grid-template-columns: 1fr 1fr; }
 }
 @supports (width: 1cqi) {
-  /* "Future-proof." is 5.7em wide and never wraps, but the column is only 360-540px at 1000-1180px: size it to the column */
-  @media (min-width: 1000px) {
+  /* "Future-proof." is 5.7em wide and never wraps, but the column is only 320-540px from 720px to 1180px: size it to the column */
+  @media (min-width: 720px) {
     .about__txt { container-type: inline-size; }
     .about .h2 { font-size: min(7.7vw, 16.5cqi, 108px); }
+  }
+  @media (min-width: 720px) and (max-width: 999px) {
+    .figures__n { font-size: min(clamp(48px, 9vw, 88px), 15cqi); }      /* three figures share a ~320-420px column */
   }
 }
 
@@ -217,20 +262,27 @@ html:not(.js) .node::before {
 .areas__list { position: relative; display: grid; padding-left: 40px; margin-top: 4px; }
 .areas__list::before { content: ""; position: absolute; left: 13px; top: 32px; bottom: 32px; width: 5px; background: var(--red); }
 .area {
-  position: relative; display: grid; grid-template-columns: 1fr; align-content: center; gap: 2px; min-height: 68px; padding: 10px 0;
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; column-gap: 12px; row-gap: 2px; min-height: 68px; padding: 10px 0;
   text-decoration: none; color: var(--t1); border-bottom: 1px solid var(--hair-2);
 }
 .area::before {
   content: ""; position: absolute; left: -40px; top: 50%; width: 26px; height: 26px; margin-top: -13px; border-radius: 50%;
   background: radial-gradient(circle, var(--red) 0 4px, var(--ink) 4.5px); border: 3px solid var(--red);
 }
+/* the label owns the right-hand column (not an overlay), so a long name wraps beside it instead of running under it */
 .area::after {
-  content: "Start a quote"; position: absolute; right: 0; top: 50%; margin-top: -8px; font: 500 10.5px/1 var(--ff-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--t3);
+  content: "Start a quote"; content: "Start a quote" / ""; grid-column: 2; grid-row: 1 / 3; align-self: center; white-space: nowrap;      /* "/ ''": not read out, the link's name already says it */
+  font: 500 10.5px/1 var(--ff-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--t3);
 }
+.area__i, .area__n { grid-column: 1; }
 .area__i { font: 700 11px/1 var(--ff-mono); letter-spacing: .16em; color: var(--red); }
 .area__n { font: 900 clamp(30px, 8vw, 44px)/1 var(--ff-head); font-stretch: 62%; text-transform: uppercase; letter-spacing: 0; }
 .area:hover .area__n, .area:focus-visible .area__n, .area.is-hot .area__n { color: var(--red); }
 .area:hover::before, .area.is-hot::before { background: radial-gradient(circle, #fff 0 4px, var(--red) 4.5px); }
+@media (max-width: 359px) {            /* below the 360 design floor the single word Wellington no longer fits beside the label: stack it under the name */
+  .area { grid-template-columns: minmax(0, 1fr); }
+  .area::after { grid-column: 1; grid-row: 3; align-self: start; margin-top: 4px; }
+}
 
 .map__pipe, .map__pipe-trench { vector-effect: none; stroke-linejoin: round; }
 .map__pipe-trench { stroke: rgba(255, 48, 25, .17); stroke-width: 22; }
@@ -242,6 +294,8 @@ html:not(.js) .node::before {
   .map::before { left: -1px; top: -1px; border-left: 2px solid #fff; border-top: 2px solid #fff; }
   .map::after { right: -1px; bottom: -1px; border-right: 2px solid var(--red); border-bottom: 2px solid var(--red); }
   .map__bg { display: block; position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+  /* decorative texture, not a picture: a 400px photo drawn ~1240px wide at .4 opacity under this mask is meant to read as soft focus
+     (a 1200px file would cost ~77KB for detail the filter hides), so it stays the small file on purpose */
   .map__bg img {
     width: 100%; height: 100%; object-fit: cover; opacity: .4; filter: grayscale(1) contrast(1.4) brightness(.85);
     -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 30%, transparent 100%); mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 30%, transparent 100%);
@@ -256,7 +310,7 @@ html:not(.js) .node::before {
   }
   .area::before { position: static; margin: 0; grid-column: 1; grid-row: 1 / 3; }
   .area::after { display: none; }
-  .area__i { grid-column: 2; grid-row: 1; align-self: end; }
+  .area__i { grid-column: 2; grid-row: 1; align-self: end; padding: 3px 6px 2px; background: var(--ink); }
   .area__n { grid-column: 2; grid-row: 2; align-self: start; font-size: clamp(26px, 3.1vw, 44px); }
   .area--left { grid-template-columns: auto 26px; justify-items: end; text-align: right; transform: translate(calc(-100% + 13px), -50%); }
   .area--left::before { grid-column: 2; }
@@ -265,7 +319,7 @@ html:not(.js) .node::before {
   .area::before { transition: transform .55s var(--ease-snap), opacity .3s; }
   .area__i, .area__n { transition: opacity .45s, transform .55s var(--ease-out); }
   .js .area:not(.is-on)::before { transform: scale(.55); opacity: .35; }
-  .js .area:not(.is-on) .area__i, .js .area:not(.is-on) .area__n { opacity: .28; transform: translateX(-10px); }
+  .js .area:not(.is-on) .area__i, .js .area:not(.is-on) .area__n { opacity: .62; transform: translateX(-10px); }      /* .62 keeps the name above 4.5:1 until the pipe reaches it */
   .js .area--left:not(.is-on) .area__i, .js .area--left:not(.is-on) .area__n { transform: translateX(10px); }
   .js .area:focus-visible::before { transform: none; opacity: 1; }
   .js .area:focus-visible .area__i, .js .area:focus-visible .area__n { opacity: 1; transform: none; }
@@ -280,7 +334,7 @@ html:not(.js) .node::before {
 /* ==========================================================================
    Careers
    ========================================================================== */
-.careers__grid { display: grid; gap: 40px; align-items: center; }
+.careers__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
 .careers__tag { grid-column: 1 / -1; margin-bottom: 4px; }
 .careers__txt { display: grid; gap: 24px; align-content: start; }
 .careers__fig .fig__frame { aspect-ratio: 4 / 3; }
@@ -293,7 +347,7 @@ html:not(.js) .node::before {
    Contact + form
    ========================================================================== */
 .contact { padding-bottom: clamp(72px, 9vw, 120px); }
-.contact__grid { display: grid; gap: 52px; }
+.contact__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 52px; }
 .contact__lead { display: grid; align-content: start; gap: 24px; }
 .contact__lead .tag { margin-bottom: 4px; }
 .bigcalls { display: grid; gap: 12px; margin-top: 8px; }
@@ -310,6 +364,13 @@ html:not(.js) .node::before {
 .bigcall__who { grid-area: who; font: 500 11px/1.2 var(--ff-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--t3); }
 .bigcall__num { grid-area: num; font: 900 clamp(44px, 12.4vw, 68px)/1 var(--ff-head); font-stretch: 62%; letter-spacing: .01em; color: var(--t1); white-space: nowrap; }
 .bigcall__hint { grid-area: hint; font: 700 10.5px/1 var(--ff-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+@supports (width: 1cqi) {
+  /* the number is 4.6em wide and used to take whatever the icon left it (the icon shrank to a sliver at 320-360px and 960-1040px).
+     Now the icon has a fixed 34px track and the number is never bigger than the rest of the tile (tile content - icon - gap = 100cqi - 52px;
+     it keeps the size above wherever that already fits). If a visitor's own text spacing makes it wider than that it wraps at the spaces. */
+  .bigcall { container-type: inline-size; grid-template-columns: 34px minmax(0, 1fr); }
+  .bigcall__num { font-size: clamp(32px, min(12.4vw, (100cqi - 52px) / 4.75), 68px); white-space: normal; overflow-wrap: anywhere; }
+}
 .reach { display: grid; gap: 18px; margin-top: 6px; }
 .reach__mail {
   display: inline-flex; align-items: center; gap: 12px; min-height: 52px; width: fit-content; max-width: 100%;
@@ -335,11 +396,11 @@ html:not(.js) .node::before {
 .field label { font: 500 11px/1 var(--ff-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--t3); }
 .field input, .field select, .field textarea {
   width: 100%; min-height: 54px; padding: 13px 14px; border-radius: 0;
-  background: var(--ink); border: 1px solid var(--hair); color: var(--t1); font-size: 17px; line-height: 1.3;
+  background: var(--ink); border: 1px solid var(--t4); color: var(--t1); font-size: 17px; line-height: 1.3;   /* --t4 on the panel is ~5.5:1; a hairline was 1.7:1, under the 3:1 a control boundary needs */
   -webkit-appearance: none; appearance: none;
 }
 .field textarea { min-height: 128px; resize: vertical; }
-.field input:hover, .field select:hover, .field textarea:hover { border-color: rgba(255, 255, 255, .45); }
+.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--t2); }
 .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--red); outline-offset: 0; border-color: var(--red); }
 .field select {
   padding-right: 44px; cursor: pointer;
@@ -349,6 +410,8 @@ html:not(.js) .node::before {
 .field select option { background: #131315; color: #fff; }
 .field.is-bad input, .field.is-bad select { border-color: #ff8d7d; }
 .field-row { display: grid; gap: 22px; }
+/* the two selects: 'Watermain Connections' is ~181px at 17px + 14px/44px padding, so two columns only once each is ~248px (min() keeps one column from overflowing) */
+.field-row--sel { grid-template-columns: repeat(auto-fit, minmax(min(100%, 248px), 1fr)); }
 .hint { margin-top: -8px; font-size: 14px; line-height: 1.5; color: var(--t3); }
 .err { font: 500 12.5px/1.45 var(--ff-mono); letter-spacing: .02em; color: #ff8d7d; }
 .err::before { content: "! "; font-weight: 700; }
@@ -362,14 +425,18 @@ html:not(.js) .node::before {
 @keyframes preFlash { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.035, 1.18); } }
 
 .qform__submit { width: 100%; }
+.qform__after { display: grid; gap: 12px; margin-top: -8px; }      /* sits tight under the button: both lines belong to it */
+.qform__privacy { font-size: 14.5px; line-height: 1.55; color: var(--t1); }
 .qform__note { font-size: 14.5px; line-height: 1.55; color: var(--t2); }
 .qform__note b { color: var(--t1); }
+html:not(.js) .qform { display: none; }      /* without script the form can do nothing: the noscript panel above it gives the email address and both numbers instead */
 
 .confirm { position: relative; display: grid; gap: 18px; padding: clamp(22px, 3.4vw, 40px); border: 1px solid var(--red); background: rgba(17, 17, 19, .92); }
-.confirm:focus { outline: none; }
-.confirm:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.confirm:focus, .qform:focus { outline: none; }
+.confirm:focus-visible, .qform:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 .confirm__h { font: 900 clamp(38px, 8vw, 58px)/.92 var(--ff-head); font-stretch: 62%; text-transform: uppercase; color: var(--t1); }
 .confirm__p { font-size: 16.5px; line-height: 1.55; color: var(--t2); }
+.confirm__short { padding: 12px 14px; border-left: 3px solid var(--red); background: rgba(255, 48, 25, .09); font-size: 16px; line-height: 1.5; color: var(--t1); }
 .confirm__msg {
   margin: 0; max-height: 440px; overflow: auto; padding: 16px; white-space: pre-wrap; overflow-wrap: anywhere;
   font: 400 13.5px/1.65 var(--ff-mono); color: var(--t1); background: var(--ink); border: 1px solid var(--hair);
@@ -379,7 +446,11 @@ html:not(.js) .node::before {
 .confirm__calls { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }   /* two tiles only when each has room for its number */
 
 @media (min-width: 560px) {
-  .field-row { grid-template-columns: 1fr 1fr; }
+  .field-row:not(.field-row--sel) { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 359px) {            /* below the 360 design floor the panels are only ~210px inside: trim them (and the select padding) so 'Watermain Connections' and a call tile's number still fit (16px keeps iOS from zooming on focus) */
+  .qform, .confirm { padding: 16px; }
+  .field select { padding-left: 12px; padding-right: 34px; font-size: 16px; background-position: right 8px center; background-size: 20px; }
 }
 @media (min-width: 960px) {
   .contact__grid { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 80px; align-items: start; }
@@ -450,6 +521,9 @@ html:not(.js) .node::before {
   .tblock__c--logo { grid-column: span 4; }
   .tblock__c:nth-child(2) { grid-column: span 2; }
   .tblock__c:nth-child(3), .tblock__c:nth-child(4) { grid-column: span 3; }
+}
+@media (min-width: 1180px) and (max-width: 1399px) {          /* "Mangaroa Valley Road," is ~165px wide and two columns are only ~155-165px of text here: three each keeps the address to its two lines */
+  .tblock__c--logo, .tblock__c:nth-child(2) { grid-column: span 3; }
 }
 @media (max-width: 759px) {
   .tblock__c:nth-child(2), .tblock__c:nth-child(3), .tblock__c:nth-child(4), .tblock__c:nth-child(5) { grid-column: 1 / -1; }

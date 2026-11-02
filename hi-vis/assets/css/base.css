@@ -100,7 +100,7 @@ button { cursor: pointer; }
   outline-offset: 3px;
 }
 .bg-black, .site-header, .site-footer, .callbar, .hero, .reel, .blocked-dark { --focus: var(--white); }
-.bg-red, .blocked, .careers { --focus: var(--black); }
+.bg-red, .blocked, .careers, .svc { --focus: var(--black); }   /* .svc: paper cards sit inside the black services section */
 
 .vh {
   position: absolute !important;
@@ -242,6 +242,7 @@ button { cursor: pointer; }
   color: var(--black);
   text-decoration: none;
   overflow: hidden;
+  container-type: inline-size;              /* lets the number size itself to the block (see __num) */
   isolation: isolate;
   -webkit-tap-highlight-color: transparent;
 }
@@ -260,6 +261,9 @@ button { cursor: pointer; }
 .call-block__num {
   grid-area: num;
   font: 400 clamp(2.15rem, 9vw, 3.4rem)/1 var(--f-display);
+  /* the same size as above wherever it fits; otherwise the largest that does. The number is about
+     5.5em wide and the icon column plus gap take 50px, so the digits are never cut off */
+  font-size: min(clamp(2.15rem, 9vw, 3.4rem), calc((100cqi - 50px) / 5.7));
   letter-spacing: .01em;
   white-space: nowrap;
 }
